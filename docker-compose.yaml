@@ -2,7 +2,7 @@ services:
   next-app:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: ../docker/Dockerfile.dev
     ports:
       - 3000
     volumes:
@@ -10,10 +10,10 @@ services:
       - /frontend/node_modules
 
   nginx:
-    build:
-      context: ./docker/nginx
-      dockerfile: ./docker/nginx/Dockerfile
+    image: nginx:1.25-alpine
     ports:
       - "8083:8080"
+    volumes:
+      - ./docker/nginx/development:/etc/nginx/conf.d
     depends_on:
-      - frontend
+      - next-app
