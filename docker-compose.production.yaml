@@ -14,6 +14,6 @@ services:
     ports:
       - "8083:8080"
     volumes:
-      - ./docker/nginx/development:/etc/nginx/conf.d
+      - ./docker/nginx/production:/etc/nginx/conf.d
     depends_on:
       - next-app
