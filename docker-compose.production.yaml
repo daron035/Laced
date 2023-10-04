@@ -1,19 +1,19 @@
 services:
-  client:
-    build:
-      context: ./client/
-      dockerfile: Dockerfile.prod
+  next-app:
+    build: 
+      context: ./frontend
+      dockerfile: ../docker/Dockerfile.prod
     ports:
       - 3000
     volumes:
-      - ./client/:/client
-      - /client/node_modules
+      - ./frontend/:/frontend
+      - /frontend/node_modules
 
   nginx:
-    build:
-      context: ./nginx/
-      dockerfile: Dockerfile
+    image: nginx:1.25-alpine
     ports:
       - "8083:8080"
+    volumes:
+      - ./docker/nginx/development:/etc/nginx/conf.d
     depends_on:
-      - client
+      - next-app

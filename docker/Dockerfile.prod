@@ -1,24 +1,24 @@
  FROM node:18-alpine AS base
 
  FROM base AS dependencies
- WORKDIR /application
- COPY package.json package-lock.json /application/
+ WORKDIR /app
+ COPY package.json package-lock.json /app/
  RUN npm ci
 
  FROM base AS builder
- WORKDIR /application
- COPY --from=dependencies /application/node_modules/ /application/node_modules/
- COPY . /application
+ WORKDIR /app
+ COPY --from=dependencies /app/node_modules/ /app/node_modules/
+ COPY . /app
  # to disable telemetry in next.js, uncomment the following line
  # ENV NEXT_TELEMETRY_DISABLED 1
  RUN npm run build
 
  FROM base AS runner
- WORKDIR /application
+ WORKDIR /app
  ENV NODE_ENV production
- COPY --from=builder /application/public/ /application/public/
- COPY --from=builder /application/.next/ /application/.next/
- COPY --from=builder /application/node_modules/ /application/node_modules/
- COPY package.json /application/
+ COPY --from=builder /app/public/ /app/public/
+ COPY --from=builder /app/.next/ /app/.next/
+ COPY --from=builder /app/node_modules/ /app/node_modules/
+ COPY package.json /app/
  EXPOSE 3000
  CMD npm run start
