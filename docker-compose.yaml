@@ -2,7 +2,7 @@ services:
   next-app:
     build: 
       context: ./frontend
-      dockerfile: ../docker/Dockerfile.dev
+      dockerfile: ../docker/frontend/Dockerfile.dev
     ports:
       - 3000
     volumes:
