@@ -3,11 +3,27 @@ services:
     build: 
       context: ./frontend
       dockerfile: ../docker/frontend/Dockerfile.dev
-    ports:
+    expose:
       - 3000
     volumes:
       - ./frontend/:/frontend
       - /frontend/node_modules
+  
+  backend:
+    container_name: django_rest
+    restart: unless-stopped
+    build:
+      context: ./backend
+      dockerfile: ../docker/backend/Dockerfile
+    entrypoint: /app/docker/backend/entrypoint.sh
+    volumes:
+      - .:/app
+      # - static_volume:/app/backend/server/django_static
+      - static_volume:/home/app/web/django_static
+      # - media_volume:/app/backend/server/media
+      - media_volume:/home/app/web/media
+    expose:
+      - 8000
 
   nginx:
     image: nginx:1.25-alpine
@@ -15,5 +31,7 @@ services:
       - "8083:8080"
     volumes:
       - ./docker/nginx/development:/etc/nginx/conf.d
+      - static_volume:/home/app/web/django_static
+      - media_volume:/home/app/web/media
     depends_on:
       - next-app
