@@ -15,9 +15,9 @@ services:
     build:
       context: ./backend
       dockerfile: ../docker/backend/Dockerfile
-    entrypoint: /app/docker/backend/entrypoint.sh
-    volumes:
-      - .:/app
+    # entrypoint: /app/docker/backend/entrypoint.sh
+    volumes: 
+      # - .:/app
       # - static_volume:/app/backend/server/django_static
       - static_volume:/home/app/web/django_static
       # - media_volume:/app/backend/server/media

@@ -82,6 +82,10 @@ USER app
 # run entrypoint.prod.sh
 # ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]
 
+COPY ./server/entrypoint.sh $APP_HOME
+RUN chmod +x /home/app/web/entrypoint.sh
+ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+
 ##########################
 ##########################
 # # poetry export --without-hashes --format=requirements.txt > requirements.txt
