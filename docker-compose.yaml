@@ -1,15 +1,19 @@
 services:
-  client:
-    build: ./client/
+  next-app:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     ports:
       - 3000
     volumes:
-      - ./client/:/client
-      - /client/node_modules
+      - ./frontend/:/frontend
+      - /frontend/node_modules
 
   nginx:
-    build: ./nginx/
+    build:
+      context: ./docker/nginx
+      dockerfile: ./docker/nginx/Dockerfile
     ports:
       - "8083:8080"
     depends_on:
-      - client
+      - frontend
