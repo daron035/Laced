@@ -9,7 +9,7 @@ services:
       - ./frontend/:/frontend
       - /frontend/node_modules
   
-  backend:
+  django:
     container_name: django_rest
     restart: unless-stopped
     build:
@@ -35,3 +35,7 @@ services:
       - media_volume:/home/app/web/media
     depends_on:
       - next-app
+
+volumes:
+  static_volume:
+  media_volume:
