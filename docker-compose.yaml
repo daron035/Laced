@@ -1,0 +1,15 @@
+services:
+  client:
+    build: ./client/
+    ports:
+      - 3000
+    volumes:
+      - ./client/:/client
+      - /client/node_modules
+
+  nginx:
+    build: ./nginx/
+    ports:
+      - "8083:8080"
+    depends_on:
+      - client
