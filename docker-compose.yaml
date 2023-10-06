@@ -16,8 +16,10 @@ services:
       context: ./backend
       dockerfile: ../docker/backend/Dockerfile
     # entrypoint: /app/docker/backend/entrypoint.sh
+    # command: gunicorn server.server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
+    entrypoint: /app/docker/backend/entrypoint.sh
     volumes: 
-      # - .:/app
+      - .:/app
       # - static_volume:/app/backend/server/django_static
       - static_volume:/home/app/web/django_static
       # - media_volume:/app/backend/server/media
