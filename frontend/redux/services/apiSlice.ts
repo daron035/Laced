@@ -11,7 +11,8 @@ const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
   // baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
-  baseUrl: `http://178.253.40.150/api`,
+  baseUrl: `http://178.253.40.150:8083/api`,
+  // baseUrl: `http://localhost:8000/api`,
   credentials: "include",
 });
 const baseQueryWithReauth: BaseQueryFn<
