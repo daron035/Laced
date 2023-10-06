@@ -70,7 +70,7 @@ RUN pip install --no-cache /wheels/*
 
 # copy project
 COPY server $APP_HOME
-COPY ./server/entrypoint.sh $APP_HOME
+# COPY ./server/entrypoint.sh $APP_HOME
 # COPY ../docker/backend/entrypoint.sh $APP_HOME
 
 # chown all the files to the app user
