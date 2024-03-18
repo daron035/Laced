@@ -59,8 +59,8 @@ services:
     ports:
       - 8083:8080
     restart: on-failure
-    # extra_hosts:
-    #   - "host.docker:host-gateway"
+    extra_hosts:
+      - "host.docker:host-gateway"
 
 volumes:
   static_volume:
