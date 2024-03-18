@@ -19,10 +19,11 @@ export function getImgURL(url: string | null): string {
   };
 
   // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-  const link = url.replace("django", "host.docker"); // 🚨🚨🚨🚨🚨🚨
+  // const link = url.replace("django", "host.docker"); // 🚨🚨🚨🚨🚨🚨
   // const link = url.replace("127.0.0.1", "host.docker"); //  🚨🚨🚨🚨
   // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-  const base64Encoded = btoa(link);
+  // const base64Encoded = btoa(link);
+  const base64Encoded = btoa(url);
   const path = `/rs:fit:300:300/${base64Encoded}`;
   // const path = `/rs:fit:900:900/${base64Encoded}`;
   const signature = sign(SALT, path, KEY);
