@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 os.environ.setdefault(
     "DJANGO_SETTINGS_MODULE",
-    getenv("DJANGO_SETTINGS_MODULE", "server.settings"),
+    getenv("DJANGO_SETTINGS_MODULE", "server.settings.development"),
 )
 
 application = get_asgi_application()
