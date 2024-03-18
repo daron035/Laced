@@ -1,0 +1,18 @@
+[
+  {
+    "model": "product.variation",
+    "pk": 1,
+    "fields": {
+      "category": 1,
+      "name": "Size"
+    }
+  },
+  {
+    "model": "product.variation",
+    "pk": 2,
+    "fields": {
+      "category": 1,
+      "name": "Color"
+    }
+  }
+]

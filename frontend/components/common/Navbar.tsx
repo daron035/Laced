@@ -48,10 +48,6 @@ export default function Navbar() {
     </Link>
   );
 
-  // if (isLoading) {
-  //   return <header className="h-[72px]"></header>;
-  // }
-
   return (
     <header className="hdr">
       <div className="hdr__inner">
@@ -59,13 +55,15 @@ export default function Navbar() {
           <Burger width="25px" height="25px" fill="#101010" />
         </div>
         <div className="hdr__logo">
-          <Image
-            src="/logo.svg"
-            width={72}
-            height={72}
-            alt=""
-            className="min-w-[72px] max-h-[72px]"
-          />
+          <Link href="/">
+            <Image
+              src="/logo.svg"
+              width={72}
+              height={72}
+              alt=""
+              className="min-w-[72px] max-h-[72px]"
+            />
+          </Link>
         </div>
         <nav className="nav">
           <ul className="nav__list">

@@ -1,0 +1,13 @@
+@import "./variable.sass";
+
+@mixin mobile {
+  @media (max-width: $sm) {
+    @content;
+  }
+}
+
+// @mixin desktop {
+//   @media (max-width: $lg) {
+//     @content;
+//   }
+// }

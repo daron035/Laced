@@ -3,7 +3,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Provider from "@/redux/provider";
 import { Navbar, Footer } from "@/components/common";
-import Setup from "@/components/common/utils/Setup";
+import { Cookies, Setup } from "@/components/utils";
+import { Suspense } from "react";
+import { NavigationEvents } from "@/components/utils/navigation-events";
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,11 +20,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = cookies();
+  const preferencesIsSet = cookieStore.get("sessionid");
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <Provider>
           <Setup />
+          <Cookies view={preferencesIsSet ? true : false} />
           <Navbar />
           <div className="bg-[#FAF9F8]">{children}</div>
           <Footer />

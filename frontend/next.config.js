@@ -1,6 +1,23 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    output: 'standalone',
-}
+const path = require("path");
 
-module.exports = nextConfig
+const nextConfig = {
+  output: "standalone",
+  reactStrictMode: false,
+  sassOptions: {
+    includePaths: [path.join(__dirname, "styles")],
+  },
+  // images: {
+  //   domains: ["localhost"],
+  // },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "*",
+      },
+    ],
+  },
+};
+
+module.exports = nextConfig;

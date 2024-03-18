@@ -1,0 +1,46 @@
+* {
+  box-sizing: border-box;
+}
+
+.Checkbox {
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+.Checkbox > * {
+  position: absolute;
+}
+.Checkbox-visible {
+  border: 1px solid gray;
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  background: #fff;
+  border: 1px solid #dedede;
+  border-radius: 3px;
+}
+.Checkbox > input {
+  z-index: 1;
+  opacity: 0;
+  left: 50%;
+  top: 50%;
+  transform: translatex(-50%) translatey(-50%);
+  display: block;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+.Checkbox > input:checked + .Checkbox-visible {
+  background: #59cb59;
+  border-color: #59cb59;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTQnIGhlaWdodD0nMTQnIHZpZXdCb3g9JzAgMCAxNCAxNCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48dGl0bGU+d2hpdGU8L3RpdGxlPjxwYXRoIGQ9J001LjM3OCAxMS4zN0wyIDcuNTlsMS40MzgtMS4yODZMNS4zNzQgOC40N2w1LjE4NS01Ljg0TDEyIDMuOTFsLTYuNjIyIDcuNDYnIGZpbGw9JyNmZmYnLz48L3N2Zz4=);
+}
+.Checkbox > input:hover + .Checkbox-visible {
+  border-color: #cccccc;
+}
+.Checkbox > input:hover:checked + .Checkbox-visible {
+  border-color: #0ca750;
+}
+.Checkbox > input:focus + .Checkbox-visible {
+  border-color: #59cb59;
+}

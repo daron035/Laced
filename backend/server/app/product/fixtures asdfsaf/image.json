@@ -1,0 +1,35 @@
+[
+  {
+    "model": "product.image",
+    "pk": 1,
+    "fields": {
+      "image": "aasfdas",
+      "lg_image": null,
+      "md_image": null,
+      "sm_image": null,
+      "tn_image": null
+    }
+  },
+  {
+    "model": "product.image",
+    "pk": 2,
+    "fields": {
+      "image": "asfasd",
+      "lg_image": null,
+      "md_image": null,
+      "sm_image": null,
+      "tn_image": null
+    }
+  },
+  {
+    "model": "product.image",
+    "pk": 3,
+    "fields": {
+      "image": "asdfjaslk",
+      "lg_image": null,
+      "md_image": null,
+      "sm_image": null,
+      "tn_image": null
+    }
+  }
+]

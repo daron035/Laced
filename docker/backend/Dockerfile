@@ -1,192 +1,85 @@
-###########
-# BUILDER #
-###########
+# # FROM python:3.10-slim-buster
+# FROM python:3.11.4-slim-buster
+#
+# ENV PYTHONUNBUFFERED 1
+# ENV PYTHONDONTWRITEBYTECODE 1
+#
+# RUN apt-get update \
+#   # dependencies for building Python packages
+#   && apt-get install -y build-essential \
+#   # psycopg2 dependencies
+#   && apt-get install -y libpq-dev \
+#   # Translations dependencies
+#   && apt-get install -y gettext \
+#   # Additional dependencies
+#   && apt-get install -y procps \
+#   # cleaning up unused files
+#   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+#   && rm -rf /var/lib/apt/lists/*
+#
+#
+# # Requirements are installed here to ensure they will be cached.
+# COPY backend/requirements.txt /requirements.txt
+# RUN pip install -r /requirements.txt
+#
+# COPY docker/backend/entrypoint.sh /entrypoint.sh
+# # RUN sed -i 's/\r$//g' /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
+#
+# WORKDIR /app
+#
+# ENTRYPOINT ["/entrypoint.sh"]
 
 # pull official base image
-FROM python:3.12.0-alpine as builder
+FROM python:3.12.0-alpine
 
 # set work directory
-WORKDIR /usr/src/app
+WORKDIR /home/app/web
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apk update \
-    && apk add postgresql postgresql-dev gcc python3-dev musl-dev zlib jpeg-dev libjpeg freetype-dev \
-    fribidi-dev \
-    harfbuzz-dev \
-    jpeg-dev \
-    lcms2-dev \
-    openjpeg-dev \
-    tcl-dev \
-    tiff-dev \
-    tk-dev \
-    zlib-dev
+# # install psycopg2 dependencies
+# RUN apk update \
+#     && apk add postgresql-dev gcc python3-dev musl-dev
+#
+# RUN apk --update add postgresql zlib jpeg-dev libjpeg freetype-dev \
+#     fribidi-dev \
+#     harfbuzz-dev \
+#     jpeg-dev \
+#     lcms2-dev \
+#     openjpeg-dev \
+#     tcl-dev \
+#     tiff-dev \
+#     tk-dev \
+#     zlib-dev
 
-# lint
-RUN pip install --upgrade pip
-# RUN pip install flake8==6.0.0
-COPY server /usr/src/app/
-# RUN flake8 --ignore=E501,F401 .
+# install psycopg2 dependencies
+# RUN apk update \
+#     && apk add postgresql-dev gcc python3-dev musl-dev \
+#     && apk --update add postgresql zlib jpeg-dev libjpeg freetype-dev \
+#     fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
 
-# install python dependencies
-COPY requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
-
-
-#########
-# FINAL #
-#########
-
-# pull official base image
-FROM python:3.12.0-alpine
-
-# create directory for the app user
-RUN mkdir -p /home/app
-
-# create the app user
-# RUN addgroup --system app && adduser --system app --group app
-RUN addgroup -S app && adduser -S app -G app
-
-# create the appropriate directories
-ENV HOME=/home/app
-ENV APP_HOME=/home/app/web
-RUN mkdir $APP_HOME
-WORKDIR $APP_HOME
-
+RUN apk update && \
+    apk add postgresql-dev gcc python3-dev musl-dev \
+            postgresql zlib jpeg-dev libjpeg freetype-dev \
+            fribidi-dev harfbuzz-dev jpeg-dev lcms2-dev \
+            openjpeg-dev tcl-dev tiff-dev tk-dev zlib-dev
+# install psycopg2
+RUN pip install psycopg2
 # install dependencies
-# RUN apt-get update && apt-get install -y --no-install-recommends netcat
-RUN apk update && apk add libpq
-COPY --from=builder /usr/src/app/wheels /wheels
-COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --upgrade pip
-RUN pip install --no-cache /wheels/*
+COPY backend/requirements.txt .
+RUN pip install -r requirements.txt
 
-# copy entrypoint.prod.sh
-# COPY ./entrypoint.prod.sh .
-# RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.prod.sh
-# RUN chmod +x  $APP_HOME/entrypoint.prod.sh
+# copy entrypoint.sh
+COPY docker/backend/entrypoint.sh /entrypoint.sh
+# RUN sed -i 's/\r$//g' /usr/src/app/entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # copy project
-COPY server $APP_HOME
-# COPY ./server/entrypoint.sh $APP_HOME
-# COPY ../docker/backend/entrypoint.sh $APP_HOME
+COPY backend/server .
 
-# chown all the files to the app user
-RUN chown -R app:app $APP_HOME
-
-# change to the app user
-USER app
-# RUN chmod +x /home/app/web/entrypoint.sh
-
-# run entrypoint.prod.sh
-# ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]
-
-
-# RUN chmod +x /home/app/web/entrypoint.sh
-# ENTRYPOINT ["/home/app/web/entrypoint.sh"]
-
-##########################
-##########################
-# # poetry export --without-hashes --format=requirements.txt > requirements.txt
-# FROM python:3.10-alpine
-
-# WORKDIR /app
-# ADD ./backend/requirements.txt /app/backend/
-
-# RUN apk update \
-#     && apk add postgresql postgresql-dev gcc python3-dev musl-dev zlib jpeg-dev libjpeg freetype-dev \
-#     fribidi-dev \
-#     harfbuzz-dev \
-#     jpeg-dev \
-#     lcms2-dev \
-#     openjpeg-dev \
-#     tcl-dev \
-#     tiff-dev \
-#     tk-dev \
-#     zlib-dev
-
-# RUN pip install --upgrade pip
-# RUN pip install gunicorn
-# RUN pip install -r backend/requirements.txt
-
-# ADD ./backend /app/backend
-# ADD ./docker /app/docker
-##########################
-##########################
-# FROM python:3.10-alpine as builder
-
-# WORKDIR /app
-
-# ENV PYTHONDONTWRITEBYTECODE 1
-# ENV PYTHONUNBUFFERED 1
-
-# RUN apk update \
-#     && apk add postgresql postgresql-dev gcc python3-dev musl-dev zlib jpeg-dev libjpeg freetype-dev \
-#     fribidi-dev \
-#     harfbuzz-dev \
-#     jpeg-dev \
-#     lcms2-dev \
-#     openjpeg-dev \
-#     tcl-dev \
-#     tiff-dev \
-#     tk-dev \
-#     zlib-dev
-
-# RUN /usr/local/bin/python -m pip install --upgrade pip
-
-# COPY . .
-
-
-# COPY ./requirements.txt .
-# # https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
-# # https://habr.com/ru/company/wunderfund/blog/586778/
-# RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
-
-
-# FROM python:3.9.13-alpine3.15
-
-# RUN mkdir -p /home/app
-
-# # https://stackoverflow.com/questions/49955097/how-do-i-add-a-user-when-im-using-alpine-as-a-base-image
-# # https://wiki.alpinelinux.org/wiki/Setting_up_a_new_user#addgroup
-# RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-
-# # RUN groupadd app
-# # RUN useradd -m -g app app -p PASSWORD
-# # RUN usermod -aG app app
-
-# ENV HOME=/home/app
-# ENV APP_HOME=/home/app/web
-# RUN mkdir $APP_HOME
-# #RUN mkdir $APP_HOME/static
-
-# WORKDIR $APP_HOME
-
-# RUN apk update && apk add libpq postgresql postgresql-dev gcc python3-dev musl-dev libjpeg zlib jpeg-dev freetype-dev \
-#     fribidi-dev \
-#     harfbuzz-dev \
-#     jpeg-dev \
-#     lcms2-dev \
-#     openjpeg-dev \
-#     tcl-dev \
-#     tiff-dev \
-#     tk-dev \
-#     zlib-dev
-
-# COPY --from=builder /usr/src/app/wheels /wheels
-# COPY --from=builder /usr/src/app/requirements.txt .
-# RUN pip install --no-cache /wheels/*
-
-# COPY ./entrypoint.sh $APP_HOME
-
-# COPY . $APP_HOME
-
-# # https://phoenixnap.com/kb/linux-chown-command-with-examples
-# RUN chown -R appuser:appgroup $APP_HOME 
-
-# USER appuser
-# RUN chmod +x /home/app/web/entrypoint.sh
-
-# ENTRYPOINT ["/home/app/web/entrypoint.sh"]
+# run entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

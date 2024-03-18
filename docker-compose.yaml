@@ -1,42 +1,64 @@
+version: "3.8"
+
 services:
   next-app:
-    build: 
+    build:
       context: ./frontend
       dockerfile: ../docker/frontend/Dockerfile.dev
     expose:
       - 3000
+    ports:
+      - 3000:3000
     volumes:
       - ./frontend/:/frontend
       - /frontend/node_modules
-  
+
   django:
     container_name: django_rest
+    # restart: unless-stopped
     restart: unless-stopped
     build:
-      context: ./backend
-      dockerfile: ../docker/backend/Dockerfile
-    # entrypoint: /app/docker/backend/entrypoint.sh
+      context: .
+      dockerfile: docker/backend/Dockerfile
+      # dockerfile: docker/backend/Dockerfile.prod
+      # dockerfile: docker/backend/Dockerfile.not_alpine
     # command: gunicorn server.server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
-    entrypoint: /app/docker/backend/entrypoint.sh
-    volumes: 
-      - .:/app
-      # - static_volume:/app/backend/server/django_static
+
+    # entrypoint: /tr/app/docker/backend/entrypoint.sh
+    # volumes:
+    #   - .:/tr/app
+    # entrypoint: /entrypoint.sh
+    volumes:
+      # - ./docker/backend/entrypoint.sh:/entrypoint.sh
       - static_volume:/home/app/web/django_static
-      # - media_volume:/app/backend/server/media
       - media_volume:/home/app/web/media
+      - ./backend/server:/home/app/web
     expose:
       - 8000
+    ports:
+      - 8000:8000
 
   nginx:
     image: nginx:1.25-alpine
     ports:
-      - "8083:8080"
+      - "8080:8080"
     volumes:
       - ./docker/nginx/development:/etc/nginx/conf.d
       - static_volume:/home/app/web/django_static
       - media_volume:/home/app/web/media
     depends_on:
       - next-app
+
+  imgproxy:
+    image: darthsim/imgproxy:latest
+    env_file:
+      - .env
+    container_name: imgproxy
+    ports:
+      - 8083:8080
+    restart: on-failure
+    # extra_hosts:
+    #   - "host.docker:host-gateway"
 
 volumes:
   static_volume:

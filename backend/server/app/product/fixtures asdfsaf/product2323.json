@@ -1,0 +1,40 @@
+[
+  {
+    "model": "product.product",
+    "pk": 1,
+    "fields": {
+      "category": [2, 87, 111],
+      "name": "Air Jordan 1 Mid Paris White",
+      "quantity": 0,
+      "price": null,
+      "is_active": false,
+      "slug": "air-jordan-1-mid-paris-white",
+      "data": {
+        "description": "This minimalistic Air Jordan 1 Mid Paris White sneaker subtly conveys the colours of Paris in red, white and blue, with a premium upper in Air Jordan 1 Mid silhouette. The upper comes in clean white leather, spreading from the toe to heel, mixing smooth panels across the perforated toe box and main mid sides with tumbled leather around the toe, front side panels, heel panel, and eyelet strip. This is overlaid with a deep navy blue Nike Swoosh along the side in suede, while the rear ankle strap comes in delicate grey leather with a red embroidered Air Jordan Wings logo on the side. The rest of the Air Jordan 1 Mid Paris White sneaker is complete with soft white fabric around the collar, clean white laces, a white rubber midsole, and a soft grey rubber outer sole, built for maximum traction and grip.",
+        "sku": "DR8038-100",
+        "year released": 2022,
+        "colour": "White"
+      },
+      "country": [1]
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 2,
+    "fields": {
+      "category": [2, 87, 109, 128],
+      "name": "Air Jordan 1 Retro High Chicago X Off-White",
+      "quantity": 0,
+      "price": null,
+      "is_active": false,
+      "slug": "air-jordan-1-retro-high-x-off-white",
+      "data": {
+        "description": "The Air Jordan 1 gets the Off-White treatment for this September 2017 release, one of the most anticipated releases of the year takes a deconstructed look at a classic Air Jordan 1. Dressed in the original Chicago themed colourway this shoe is draped in nostalgia, but as always with designed Virgil Abloh's unique twists. The Air Jordan 1 Retro High x Off-White purposely looks half-finished in some of its detailing, visible blue stitching, \"Air\" text printed on the midsole and an Off-White Zip tie all culminate to let everyone know this is an Off-White collaboration. The modern twist on an already established heavyweight is the primary draw for this product and the many other remixed silhouettes in the Nike x Off-White range. Taking a product as overwhelmingly popular as the Air Jordan 1, and breathing new life into it in a way only Virgil could is what makes this trainer a must have. If you love high tops and you like Off-White, well this is a match made in heaven for you, I can promise you, you aren't going to find a better high top around right now.",
+        "sku": "AA3834-101",
+        "year released": 2017,
+        "colour": "Red"
+      },
+      "country": [1]
+    }
+  }
+]

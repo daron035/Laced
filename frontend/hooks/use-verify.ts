@@ -9,15 +9,13 @@ export default function useVerify() {
   const [verify] = useVerifyMutation();
 
   useEffect(() => {
-    return () => {
-      verify(undefined)
-        .unwrap()
-        .then(() => {
-          dispatch(setAuth());
-        })
-        .finally(() => {
-          dispatch(finishInitialLoad());
-        });
-    };
+    verify(undefined)
+      .unwrap()
+      .then(() => {
+        dispatch(setAuth());
+      })
+      .finally(() => {
+        dispatch(finishInitialLoad());
+      });
   }, []);
 }

@@ -7,14 +7,27 @@ import type {
 import { setAuth, logout } from "../features/authSlice";
 import { Mutex } from "async-mutex";
 
-const mutex = new Mutex();
+import { getCookie, setCookie, deleteCookie } from "@/utils";
 
+const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
-  // baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
-  baseUrl: `http://178.253.40.150:8083/api`,
+  baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
+  // baseUrl: `http://178.253.40.150:8083/api`,
   // baseUrl: `http://localhost:8000/api`,
+  // baseUrl: `http://localhost:8000/api`,
+  // baseUrl: `http://localhost:8083/api`,
+  //
+  // baseUrl: `http://localhost:8080/api`,
+  prepareHeaders: (headers) => {
+    // getCookie("");
+    const a = getCookie("csrftoken");
+    // console.log("asd", a);
+    headers.set("Accept-Language", `asdfasiodfuiaosjdfioasjdf`);
+    return headers;
+  },
   credentials: "include",
 });
+
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
@@ -62,5 +75,5 @@ const baseQueryWithReauth: BaseQueryFn<
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({}),
+  endpoints: () => ({}),
 });

@@ -1,0 +1,23 @@
+[
+  {
+    "model": "product.country",
+    "pk": 1,
+    "fields": {
+      "name": "RU"
+    }
+  },
+  {
+    "model": "product.country",
+    "pk": 2,
+    "fields": {
+      "name": "KZ"
+    }
+  },
+  {
+    "model": "product.country",
+    "pk": 3,
+    "fields": {
+      "name": "BY"
+    }
+  }
+]
