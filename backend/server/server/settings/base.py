@@ -3,15 +3,9 @@ from os import getenv, path
 import os
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
-import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
-dotenv_file = BASE_DIR / ".env.local"
-
-if path.isfile(dotenv_file):
-    dotenv.load_dotenv(dotenv_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -20,7 +14,7 @@ if path.isfile(dotenv_file):
 SECRET_KEY = getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv("DEBUG", "False") == "True"
+DEBUG = getenv("DEBUG", True)
 
 # ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 ALLOWED_HOSTS = ["*"]
@@ -47,8 +41,6 @@ INSTALLED_APPS = [
     "app.product.apps.ProductConfig",
     "app.management.apps.ManagementConfig",
     "app.purchases.apps.PurchasesConfig",
-    # "app.cart.apps.CartConfig",
-    # "app.management",
 ]
 
 MIDDLEWARE = [

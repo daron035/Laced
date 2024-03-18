@@ -83,10 +83,6 @@ export default function Carousel({ data, title }: Props) {
   const items = Array.from({ length: data.length }, (_, index) => {
     const prod = data[index];
     const imageUrl = getImgURL(prod.image);
-    console.log("1111111111111111111111");
-    console.log(prod.image);
-    console.log("8888888888888888888888");
-    console.log(imageUrl);
 
     // <Image
     //   src={imageUrl}

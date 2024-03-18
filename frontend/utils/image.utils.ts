@@ -20,8 +20,6 @@ export function getImgURL(url: string | null): string {
 
   // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
   const link = url.replace("django", "host.docker"); // 🚨🚨🚨🚨🚨🚨
-  // const link = url.replace("django", "host.docker.internal"); // 🚨🚨🚨
-  // const link = url.replace("localhost", "host.docker"); //  🚨🚨🚨🚨
   // const link = url.replace("127.0.0.1", "host.docker"); //  🚨🚨🚨🚨
   // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
   const base64Encoded = btoa(link);

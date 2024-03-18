@@ -12,12 +12,6 @@ import { getCookie, setCookie, deleteCookie } from "@/utils";
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
   baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
-  // baseUrl: `http://178.253.40.150:8083/api`,
-  // baseUrl: `http://localhost:8000/api`,
-  // baseUrl: `http://localhost:8000/api`,
-  // baseUrl: `http://localhost:8083/api`,
-  //
-  // baseUrl: `http://localhost:8080/api`,
   prepareHeaders: (headers) => {
     // getCookie("");
     const a = getCookie("csrftoken");

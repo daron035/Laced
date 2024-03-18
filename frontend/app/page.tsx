@@ -4,13 +4,6 @@ import Sl from "@/components/common/Sl";
 
 async function getData() {
   // const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/product/`, {
-  // const res = await fetch("http://127.0.0.1:8080/api/product/", {
-  // const res = await fetch("backend/api/product/", {
-  // const res = await fetch("http://django_server/api/product/", {
-  // const res = await fetch(rocess.env.NEXT_PUBLIC_HOST + "/api/product/", {
-  // const res = await fetch("/api/product/", {
-  // const res = await fetch("http://127.0.0.1:8000/api/product/", {
-  // django docker container
   const res = await fetch("http://django:8000/api/product/", {
     cache: "no-store",
   });
