@@ -1,13 +1,17 @@
 from datetime import timedelta
+from os import getenv, path
 import os
-from os import getenv
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
-from django.utils.translation import gettext_lazy as _
+import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+dotenv_file = BASE_DIR / ".env.local"
+
+if path.isfile(dotenv_file):
+    dotenv.load_dotenv(dotenv_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
