@@ -17,9 +17,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tw": "tailwindcss -i assets/styles/index.css -o app/management/static/management/css/index.min.css --watch",
+    "tw": "tailwindcss -i assets/styles/index.css -o app/management/django_static/management/css/index.min.css --watch",
     "prod": "webpack --watch --mode production",
-    "dv": "concurrently --kill-others \"tailwindcss -i assets/styles/index.css -o app/management/static/management/css/index.min.css --watch\" \"webpack --watch --mode development\"",
+    "d1": "tailwindcss -i assets/styles/tw.css -o static/css/tw.css --watch",
+    "d2": "webpack --watch --mode development",
+    "dv": "concurrently --kill-others \"npm run d1\" \"npm run d2\"",
     "dev": "webpack --watch --mode development"
   },
   "author": "",

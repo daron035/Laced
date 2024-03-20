@@ -2,12 +2,18 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        {% comment %} <script>
+            function timedRefresh(timeoutPeriod) {
+                setTimeout("location.reload(true);",timeoutPeriod);
+            }
+            window.onload = timedRefresh(1000);
+        </script> {% endcomment %}
         <title>Management</title>
         <link type="text/css"
               href="{% static 'management/css/styles.css' %}"
               rel="stylesheet" />
         <link type="text/css"
-              href="{% static 'management/css/index.min.css' %}"
+              href="{% static 'css/tw.css' %}"
               rel="stylesheet" />
         <link type="text/css"
               href="{% static 'management/css/contacts.css' %}"

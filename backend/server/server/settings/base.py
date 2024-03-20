@@ -130,8 +130,12 @@ RECENT_VIEWED_SESSION_ID = "recent_viewed_items"
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "django_static/"
+# STATIC_ROOT = BASE_DIR / "static"
 STATIC_ROOT = BASE_DIR / "django_static"
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "build/static/")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "build/static/"),
+    os.path.join(BASE_DIR, "static"),
+]
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
