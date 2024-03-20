@@ -58,7 +58,7 @@ from app.product.urls import product_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("app.management.urls")),
+    path("dj/", include("app.management.urls")),
     path("api/", include(product_router.urls)),
     path("api/", include("app.purchases.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
