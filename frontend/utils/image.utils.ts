@@ -20,8 +20,8 @@ export function getImgURL(url: string | null): string {
 
   // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
   // dev mode
-  const link = url.replace("127.0.0.1", "host.docker.internal");
-  const base64Encoded = btoa(link);
+  // const link = url.replace("127.0.0.1", "host.docker.internal");
+  // const base64Encoded = btoa(link);
   // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
 
   // let a = process.env.NODE_ENV !== "production";
@@ -29,10 +29,10 @@ export function getImgURL(url: string | null): string {
   // console.log(process.env.NODE_ENV);
 
   // production
-  // const base64Encoded = btoa(url);
+  const base64Encoded = btoa(url);
   const path = `/rs:fit:300:300/${base64Encoded}`;
   const signature = sign(SALT, path, KEY);
-  const imgUrl = `http://localhost:8083/imgproxy/${signature}${path}`;
-  // const imgUrl = `http://176.109.104.181:8083/imgproxy/${signature}${path}`;
+  // const imgUrl = `http://localhost:8083/imgproxy/${signature}${path}`;
+  const imgUrl = `http://176.109.104.181:8083/imgproxy/${signature}${path}`;
   return imgUrl;
 }
