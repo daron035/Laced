@@ -16,6 +16,8 @@ done
 ./manage.py migrate --noinput
 ./manage.py collectstatic --noinput
 
+./manage.py loaddata category.json variation.json variation_option.json country.json currency.json product.json image.json product.json
+
 gunicorn server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
 # until ./manage.py migrate
 # do
