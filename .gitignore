@@ -174,6 +174,7 @@ celerybeat.pid
 # Environments
 # .env
 # backend/server/.env
+backend/server/scrapper
 .venv
 env/
 venv/
