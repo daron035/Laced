@@ -6,6 +6,7 @@ pipeline {
             steps {
                 script {
                     sh 'echo $USER'
+                    sh 'chmod -R 777 backend/server/media'
                     sh 'docker compose up -d --build'
                 }
             }
