@@ -28,7 +28,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Provider>
           <Setup />
-          <Cookies view={preferencesIsSet ? true : false} />
+          <Cookies view={!preferencesIsSet ? true : false} />
           <Navbar />
           <div className="bg-[#FAF9F8]">{children}</div>
           <Footer />

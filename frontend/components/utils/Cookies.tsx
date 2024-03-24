@@ -3,7 +3,7 @@
 import { GeneralButton, ToggleButton } from "@/components/common";
 import { useEffect, useState } from "react";
 
-export default function RequireAuth({ view }: { view: boolean }) {
+export default function CookieModalView({ view }: { view: boolean }) {
   const [showCookie, setShowCookie] = useState(view);
   const [showPreferences, setShowPreferences] = useState(true);
 

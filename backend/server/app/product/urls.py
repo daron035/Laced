@@ -15,7 +15,7 @@ class MyCastomRouter(routers.DefaultRouter):
         ),
         routers.Route(
             url=r"^{prefix}/{lookup}/$",
-            mapping={"get": "list"},
+            mapping={"get": "retrieve"},
             name="{basename}-group-list",
             detail=False,
             initkwargs={"suffix": "Group list"},

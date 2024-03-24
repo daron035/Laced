@@ -3,8 +3,8 @@ import Slider from "@/components/common/Slider";
 import Sl from "@/components/common/Sl";
 
 async function getData() {
-  // const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/product/`, {
-  const res = await fetch("http://django:8000/api/product/", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/product/`, {
+    // const res = await fetch("http://django:8000/api/product/", {
     cache: "no-store",
   });
   // The return value is *not* serialized
