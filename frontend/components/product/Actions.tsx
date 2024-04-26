@@ -1,109 +1,128 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import GeneralButton from "@/components/common/GeneralButton";
-import AddToBag from "@/components/utils/AddToBag";
-import { Size, getCountries } from "@/utils/countries.utils";
+import { addItemToCart } from "@/redux/features/cartSlice";
+import { useAppDispatch } from "@/redux/hooks";
+import React, { useState } from "react";
+
+import { getPrice, getMinPrice } from "@/utils/price.utils";
+import { getCookie } from "@/utils";
+
 
 interface StateType {
   countryCursor: number;
-  j: number | null;
+  sizeIndex: number;
 }
 
-// data: [
-//   ['id', 'UK', 'EU', ["GBP", "EUR"]],
-//   [
-//     [33, 3.3, 36, [130, 160]],
-//     [41, 4.0, 37, [140, 180]]
-//   ]
-// ]
+function NoDataAvailable() {
+  return (
+    <>
+      <div className="flex justify-between items-center pt-4 pb-3">
+        <span className="text-sm">Available Sizes: No available sizes</span>
+      </div>
+      <GeneralButton lg action="white" title="sell this item" />
+    </>
+  );
+}
 
-const a = { UK: 1 };
-console.log(a);
-export default function Actions({ data }: { data: Size[] }) {
-  const [sizeState, setSizeState] = useState<{ i: any }>({
-    i: 0,
-  });
-  const [countryState, setCountryState] = useState<StateType>({
-    j: 1,
-    countryCursor: 0,
-  });
+export default function Actions({
+  data_matrix,
+}: {
+  data_matrix: any[];
+  product_id: number;
+}) {
+  const dispatch = useAppDispatch();
 
   // Получаем списки стран и размеров из переданных данных
-  const countries = data[0].slice(1, -1); // ['UK', 'EU']
-  const sizes = data[1];
-  const price = sizes[sizeState.i].slice(-1)[0][0]; // slice(-1)[0] это последний элемент списка
+  // console.log(data_matrix);
+  const countries = data_matrix[0].slice(1, -1); // ["id"，"uk", "eu", ["gbp", "eur"]]
+  const allSizes = data_matrix[1]; //               [[33, 3, 36, [22, 130, 160]],
+  //                                                 [41, 4, 37, [23, 140, 180]]]
+  const minPriceID = getMinPrice(allSizes)
+  const [state, setState] = useState<StateType>({
+    sizeIndex: minPriceID || 0, //     i
+    countryCursor: 0, // j
+  });
+  const selectedSize = allSizes[state.sizeIndex]; // [33, 3, 36, [130, 160]]
+  const currencies: string[] = data_matrix[0][data_matrix[0].length - 1]; // ["gbp", "eur"]
+  const [currencyIcon, currencyID] = getPrice(getCookie('currency')!, currencies); // [0] => "usd"
 
-  // Стили для контейнера размеров
-  const containerStyles: React.CSSProperties = {
-    display: "grid",
-    rowGap: "1px",
-    columnGap: "1px",
-    gridAutoFlow: "unset",
-    isolation: "isolate", // из-за z-index'ов
-    gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
+  const handleCountryClick = (index: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      countryCursor: index,
+    }));
   };
+
+  const handleSizeClick = (index: number) => {
+    setState((prevState) => ({
+      ...prevState,
+      sizeIndex: index,
+    }));
+  };
+
+  const handleClickAddToBagButton = (id: string) => {
+    dispatch(addItemToCart(id));
+    // window.location.href = "/cart";
+  };
+
+  if (!data_matrix || data_matrix.length === 0) {
+    return <NoDataAvailable />;
+  }
 
   return (
     <>
       <div>
         <div className="text-[#101010]">
           <div className="flex justify-between items-center pt-4 pb-3">
-            <span
-              className="text-sm"
-              onClick={() => console.log(sizeState, countryState)}
-            >
-              Available Sizes:
-            </span>
+            <span className="text-sm">Available Sizes:</span>
             <div className="grid grid-flow-col gap-[1px] isolate">
-              {countries.map((country, index) => (
+              {countries.map((country: string, index: number) => (
                 <span
                   key={index}
                   className={`flex justify-center items-center min-w-[48px] py-2 px-1 text-[12px]
-                    outline cursor-pointer 
+                    outline cursor-pointer uppercase
                     ${
-                      index === countryState.countryCursor
+                      index === state.countryCursor
                         ? "z-0 outline-2 outline-[#101010]"
                         : "outline-1 outline-[#E3E4E6]"
                     }`}
-                  onClick={() =>
-                    setCountryState({
-                      ...countryState,
-                      countryCursor: index,
-                      j: index + 1,
-                    })
-                  }
+                  onClick={() => handleCountryClick(index)}
                 >
                   {country}
                 </span>
               ))}
             </div>
           </div>
-          <div style={containerStyles}>
-            {sizes.map((item, index) => (
+          <div
+            style={{
+              display: "grid",
+              rowGap: "1px",
+              columnGap: "1px",
+              gridAutoFlow: "unset",
+              isolation: "isolate",
+              gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
+            }}
+          >
+            {allSizes.map((item: number[], index: number) => (
               <span
                 key={index}
                 className={`text-center text-[#101010] text-[12px] py-4 px-1 cursor-pointer
                   outline ${
-                    index === sizeState.i
+                    index === state.sizeIndex
                       ? "z-0 outline-2 outline-[#101010]"
                       : "outline-1 outline-[#E3E4E6] text-[#777777]"
                   }`}
-                onClick={() =>
-                  setSizeState({
-                    ...sizeState,
-                    index: index,
-                    i: index,
-                  })
-                }
+                onClick={() => handleSizeClick(index)}
               >
-                {item[countryState.j]}
+                {item[state.countryCursor + 1]}
               </span>
             ))}
           </div>
         </div>
         <div className="text-[#101010] text-3xl mt-8 subpixel-antialiased">
-          ${price}
+          {currencyIcon}
+          {selectedSize[selectedSize.length - 1][currencyID]}
         </div>
       </div>
       <div className="mt-8 pb-12 space-y-6">
@@ -111,7 +130,7 @@ export default function Actions({ data }: { data: Size[] }) {
           lg
           action="black"
           title="add to bag"
-          onClick={AddToBag}
+          onClick={() => handleClickAddToBagButton("1")}
         />
         <GeneralButton lg action="white" title="sell this item" />
       </div>

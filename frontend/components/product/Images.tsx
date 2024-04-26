@@ -1,52 +1,46 @@
 "use client";
 
 import Image from "next/image";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { useState, useEffect } from "react";
+import { getImgURL } from "@/utils/image.utils";
 
-const count = [1, 2, 3, 4];
-
-interface SizeData {
-  UK: number;
-  EU: number;
-  US: number;
-}
-
-const jsonData = {
-  sizes: [
-    { UK: 25, EU: 35, US: 3 },
-    { UK: 2, EU: 3, US: 4 },
-  ],
-};
-
-export default function Images() {
+export default function Images({ images }: { images: any }) {
   const [activeImage, setActiveImage] = useState(0);
+  const [mainImage, setMainImage] = useState("");
+
+  useEffect(() => {
+    setMainImage(getImgURL(images[activeImage]?.image, "900:900"));
+  }, [activeImage, images]);
+
+  const handleImageClick = (index: number) => {
+    setActiveImage(index);
+  };
 
   return (
     <div className="flex sticky top-[72px] mt-[32px]">
-      {/* маленькие картики слева */}
+      {/* Small images on the left */}
       <div className="shrink-0">
-        {count.map((img, index) => {
-          return (
-            <Image
-              src="/new_balance_650r_white_black_1.jpg"
-              width={80}
-              height={80}
-              alt="Picture of the author"
-              className={`cursor-pointer border-[1px] border-transparent${
-                activeImage === index ? "border-[1px] border-[#959595]" : ""
-              }`}
-              onClick={() => setActiveImage(index)}
-            />
-          );
-        })}
+        {Object.values(images).map((image: any, index: number) => (
+          <Image
+            key={index}
+            src={getImgURL(image?.image, "300:300")}
+            width={80}
+            height={80}
+            alt="Picture"
+            className={`cursor-pointer border-[1px] ${
+              activeImage === index ? "border-[#959595]" : "border-transparent"
+            }`}
+            onClick={() => handleImageClick(index)}
+          />
+        ))}
       </div>
-      {/* main image */}
+      {/* Main image */}
       <div className="mx-10">
         <Image
-          src="/new_balance_650r_white_black_1.jpg"
+          src={mainImage}
           width={580}
           height={580}
-          alt="Picture of the author"
+          alt="Main Picture"
         />
       </div>
     </div>

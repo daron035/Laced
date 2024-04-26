@@ -1,22 +1,30 @@
 "use client";
 
-import { useLogoutMutation } from "@/redux/features/authApiSlice";
-import { logout as setLogout } from "@/redux/features/authSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import "@/styles/navBar.sass";
 import Image from "next/image";
-import { Bag, Burger, Search } from "./svgs";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useEffect } from "react";
 import Loading from "./Loading";
 
+import { useLogoutMutation } from "@/redux/features/authApiSlice";
+import { logout as setLogout } from "@/redux/features/authSlice";
+import { getCart } from "@/redux/features/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+
+import "@/styles/navBar.sass";
+import { Bag, Burger, Search } from "./svgs";
+import fallback from "@/public/logo.svg";
+
 export default function Navbar() {
-  const router = useRouter();
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getCart());
+  }, [dispatch]);
 
   const [logout] = useLogoutMutation();
 
   const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
+  const { count } = useAppSelector((state) => state.cart);
 
   const handleLogout = () => {
     logout(undefined)
@@ -57,7 +65,8 @@ export default function Navbar() {
         <div className="hdr__logo">
           <Link href="/">
             <Image
-              src="/logo.svg"
+              // src="/logo.svg"
+              src={fallback}
               width={72}
               height={72}
               alt=""
@@ -108,9 +117,11 @@ export default function Navbar() {
           </div>
           <div className="cursor-pointer py-6 px-4 relative">
             <Bag width="25px" height="25px" fill="#101010" />
-            <div className="bg-black flex justify-center items-center w-[18px] h-[18px] text-xs text-white rounded-full absolute top-5 left-[30px]">
-              4
-            </div>
+            {count !== 0 && (
+              <div className="bg-black flex justify-center items-center w-[18px] h-[18px] text-xs text-white rounded-full absolute top-5 left-[30px]">
+                {count}
+              </div>
+            )}
           </div>
         </div>
       </div>

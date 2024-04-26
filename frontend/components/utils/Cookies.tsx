@@ -1,6 +1,7 @@
 "use client";
 
 import { GeneralButton, ToggleButton } from "@/components/common";
+import { getCookie, setCookie } from "@/utils";
 import { useEffect, useState } from "react";
 
 export default function CookieModalView({ view }: { view: boolean }) {

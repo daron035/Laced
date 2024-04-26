@@ -1,9 +1,30 @@
 from decimal import Decimal
-
+from rest_framework import status
+from rest_framework.response import Response
 from django.conf import settings
 
-from app.product.serializers import ProductSerializer
-from app.product.models import Product
+from app.product.serializers import ProductSerializer, CartProductSerializer
+from app.product.models import Product, ProductItem
+
+
+class Account:
+    def __init__(self, request):
+        self.request = request
+        self.session = request.session
+        account = self.session.get("account", None)
+        if account is None:
+            # save an empty account in session
+            account = self.session["account"] = {}
+        self.account = account
+
+    def verify(self):
+        cookies_list = ["preferred_currency", "preferred_country"]
+        for i in cookies_list:
+            if i in self.account:
+                pass
+
+    def save(self):
+        self.session.modified = True
 
 
 class Cart:
@@ -22,32 +43,37 @@ class Cart:
     def save(self):
         self.session.modified = True
 
-    def add(self, product, quantity=1, overide_quantity=False):
+    def add(self, product_item_id, quantity, overide_quantity=False):
         """
         Add product to the cart or update its quantity
         """
+        product_item_id = str(product_item_id)
 
-        # {'2': {'quantity': 5, 'price': '1800.00'}, '3': {'quantity': 5, 'price': '1800.00'}}
-        # print(self.cart)
+        prod_item = ProductItem.objects.get(pk=product_item_id)
+        price_item = "{:.2f}".format(float(prod_item.RUB))
 
-        product_id = str(product["id"])
-
-        if product_id not in self.cart:
-            # print("product_id", product_id)
-            print(self.cart)
-            self.cart[product_id] = {"quantity": 0, "price": str(product["price"])}
-            # self.cart[product_id] = {"quantity": 0}
+        if product_item_id in self.cart:
+            raise ValueError("Product already exists in the cart.")
+        if product_item_id not in self.cart:
+            self.cart[product_item_id] = {
+                "quantity": 0,
+                # "price": prod_item.price.RUB,
+                "price": price_item,
+            }
+            # self.cart[product_id] = {"quantity": 0, "price": str(product["price"])}
         if overide_quantity:
-            self.cart[product_id]["quantity"] = quantity
+            self.cart[product_item_id]["quantity"] = quantity
         else:
-            self.cart[product_id]["quantity"] += quantity
-        self.save()
+            self.cart[product_item_id]["quantity"] += quantity
 
-    def remove(self, product):
+        self.save()
+        print(self.cart)
+
+    def remove(self, product_item_id):
         """
         Remove a product from the cart
         """
-        product_id = str(product["id"])
+        product_id = str(product_item_id)
 
         if product_id in self.cart:
             del self.cart[product_id]
@@ -57,28 +83,22 @@ class Cart:
         """
         Loop through cart items and fetch the products from the database
         """
-        # {'2': {'quantity': 5, 'price': '1800.00'}, '3': {'quantity': 5, 'price': '1800.00'}}
+        # {'2': {'quantity': 5, 'price': {'RUB': '1800.00'} }, '3': {'quantity': 5, 'price': '1800.00'}}
+        # {'2': {'quantity': 5}, '3': {'quantity': 5}
         # print(self.cart)
 
         product_ids = self.cart.keys()
-        products = Product.objects.filter(id__in=product_ids)
+        products = ProductItem.objects.filter(id__in=product_ids)
         cart = self.cart.copy()
         for product in products:
-            # {'quantity': 5, 'price': '1800.00'}
-            # print(cart[str(product.id)])
-
-            serializer = ProductSerializer(product, context={"request": self.request})
+            serializer = CartProductSerializer(
+                product, context={"request": self.request}
+            )
             cart[str(product.id)]["product"] = serializer.data
-            # print("1", cart[str(product.id)]["product"], "\n")
-            # print("\n", cart[str(product.id)], "\n")
-            # print("\n", cart, "\n")
-
-            # cart[str(product.id)]["product"] = ProductSerializer(product).data
-            # cart[str(product.id)]["price"] = product.price
         for item in cart.values():
             # item["price"] = Decimal(item["price"])
-            item["price"] = Decimal(item["price"])
-            item["total_price"] = item["price"] * item["quantity"]
+            # item["price"] = item["price"]
+            # item["total_price"] = item["price"] * item["quantity"]
             yield item
 
     def __len__(self):
@@ -88,8 +108,12 @@ class Cart:
         return sum(item["quantity"] for item in self.cart.values())
 
     def get_total_price(self):
+        print("\n\n", self.cart, "\n\n")
         return sum(
-            Decimal(item["price"]) * item["quantity"] for item in self.cart.values()
+            # Decimal(item["price"]["RUB"]) * item["quantity"] for item in self.cart.values()
+            # Decimal(item["product"]["price"]["RUB"]) * item["quantity"]
+            Decimal(item["price"]) * item["quantity"]
+            for item in self.cart.values()
         )
 
     def clear(self):

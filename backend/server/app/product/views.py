@@ -20,7 +20,7 @@ from pprint import pprint
 from app.product.permissions import IsAdminOrReadOnly
 
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, GeneralProductSerializer
 
 
 class SaleProductPagination(PageNumberPagination):
@@ -30,98 +30,21 @@ class SaleProductPagination(PageNumberPagination):
     max_page_size = 4
 
 
-# class ProductViewSet(
-#     mixins.CreateModelMixin,
-#     mixins.RetrieveModelMixin,
-#     mixins.UpdateModelMixin,
-#     mixins.DestroyModelMixin,
-#     mixins.ListModelMixin,
-#     GenericViewSet,
-# ):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
-#     permission_classes = (IsAdminOrReadOnly,)
-#     pagination_class = SaleProductPagination
-#
-#     def list(self, request):
-#         queryset = self.get_queryset()
-#         page = self.paginate_queryset(queryset)
-#         serializer = self.get_serializer(queryset, many=True)
-#         serializer = self.get_serializer(page, many=True)
-#         return self.get_paginated_response(serializer.data)
-#         return Response(serializer.data)
-#
-#     def retrieve(self, request, pk=None):
-#         queryset = self.get_queryset()
-#         product = queryset.filter(slug=pk).first()
-#         if product:
-#             serializer = self.get_serializer(product)
-#             return Response(serializer.data)
-#         else:
-#             return Response(status=status.HTTP_404_NOT_FOUND)
-#
-#     # def get_queryset(self):  # переопределяем queryset
-#     #     pk = self.kwargs.get("pk", None)
-#     #     style_codes = self.request.query_params.get("style_codes", None)
-#     #     # print(self.request.locale)
-#     #     if pk:
-#     #         print("pk", pk)
-#     #         return Product.objects.filter(slug=pk)
-#     #     else:
-#     #         query_set = Product.objects.all()
-#     #         if style_codes is None:
-#     #             return Product.objects.all()[:20]
-#     #         return query_set.filter(data__sku__in=style_codes.split(","))
-#
-#     # def list(self, request):
-#     # def retrieve(self, request, pk=None):
-#     #     queryset = Product.objects.all()
-#     #     user = get_object_or_404(queryset, pk=pk)
-#     #     serializer = UserSerializer(user)
-#     #     return Response(serializer.data)
-#
-#     # def list(self, request):
-#     #     queryset = self.get_queryset()
-#     #     serializer = self.get_serializer(queryset, many=True)
-#     #     return Response(serializer.data)
-#     #
-#     # def retrieve(self, request, pk=None):
-#     #     queryset = self.get_queryset()
-#     #     product = queryset.filter(slug=pk).first()
-#     #     if product:
-#     #         serializer = self.get_serializer(product)
-#     #         return Response(serializer.data)
-#     #     else:
-#     #         return Response(status=status.HTTP_404_NOT_FOUND)
-#
-#     # def list(self, request, *args, **kwargs):
-#     #     # headers = request.META
-#     #     # pprint(headers)
-#     #
-#     #     # print("000000", request.COOKIES.get("asdf", None), "\n")
-#     #     # print("000000", request.COOKIES.get("refresh"))
-#     #     # accept_language = request.headers.get("Accept-Language", "")
-#     #     # print("Accept-Language:", accept_language)
-#     #     print()
-#     #     print("23981092943189284902")
-#     #     print()
-#     #
-#     #     return super().list(request, *args, **kwargs)
-
-
-class ProductViewSet(
-    # mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    # mixins.UpdateModelMixin,
-    # mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    GenericViewSet,
-):
+class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = SaleProductPagination
     lookup_field = "slug"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(data__price__isnull=False, is_active=True)
+        # return queryset.filter(min_price_item__isnull=False, is_active=True)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return ProductSerializer
+        return GeneralProductSerializer
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -141,3 +64,48 @@ class ProductViewSet(
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(product)
         return Response(serializer.data)
+
+    @action(
+        methods=["get"],
+        detail=False,
+        # url_path="er",
+        # url_name="product-er",
+        # permission_classes=[AllowAny],
+    )
+    def related_products(self, request):
+        # print('2332')
+        # print(request.COOKIES.get("currency"))
+        queryset = self.get_queryset()[:3]
+        serializer = self.get_serializer(queryset, many=True)
+
+        # page = self.paginate_queryset(queryset)
+        # if page is not None:
+        #     serializer = self.get_serializer(page, many=True)
+        #     return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+        return Response(
+            {"message": "Price drops action executed successfully"},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(
+        methods=["get"],
+        detail=False,
+    )
+    def trending_now(self, request):
+        queryset = self.get_queryset()[:3]
+        serializer = self.get_serializer(queryset, many=True)
+
+        # page = self.paginate_queryset(queryset)
+        # if page is not None:
+        #     serializer = self.get_serializer(page, many=True)
+        #     return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+        return Response(
+            {"message": "Price drops action executed successfully"},
+            status=status.HTTP_200_OK,
+        )

@@ -1,31 +1,24 @@
+"use server"
+
 import Carousel from "@/components/common/Carousel";
-import Slider from "@/components/common/Slider";
 import Sl from "@/components/common/Sl";
+import { headers } from "next/headers";
+import { getData } from "@/utils/car";
 
-async function getData() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/product/`, {
-    // const res = await fetch("http://django:8000/api/product/", {
-    cache: "no-store",
-  });
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
-
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
-}
 
 export default async function Page() {
-  const data = await getData();
+  const data = await getData("related_products");
+  const ip = headers().get("x-forwarded-for");
 
   return (
     <div className="">
       <Sl />
+      <p>
+          IP Address:
+          {` ${ip}` || " Not found"}
+        </p>
       <div className="max-w-[1162px] mx-auto">
-        {data.results && <Carousel data={data.results} title="most popular" />}
+        {data && <Carousel data={data} title="related products" />}
       </div>
     </div>
   );

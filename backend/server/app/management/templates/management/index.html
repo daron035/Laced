@@ -2,19 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        {% comment %} <script>
-            function timedRefresh(timeoutPeriod) {
-                setTimeout("location.reload(true);",timeoutPeriod);
-            }
-            window.onload = timedRefresh(1000);
-        </script> {% endcomment %}
         <title>Management</title>
         <link type="text/css"
               href="{% static 'management/css/styles.css' %}"
               rel="stylesheet" />
-        <link type="text/css"
-              href="{% static 'css/tw.css' %}"
-              rel="stylesheet" />
+        <link type="text/css" href="{% static 'css/tw.css' %}" rel="stylesheet" />
         <link type="text/css"
               href="{% static 'management/css/contacts.css' %}"
               rel="stylesheet" />
@@ -34,14 +26,9 @@
                     <img src="{% static 'management/images/logo.svg' %}"
                          width="auto"
                          height="100%"
-                         alt="asdf" />
+                         alt="logo" />
                     <span style="margin-left: 20px">Name</span>
-                    <div class="text-yellow-300">asdfsadf</div>
-                    <div class="text-teal-600">asdfasfdaa</div>
-                    <div class="text-red-300">asdfasfdaa</div>
                 </div>
-                <button hx-get="{% url 'ab' %}" hx-trigger="click" hx-swap="outerHTML">Click me</button>
-                <div class="text-white">asdfasfdaa</div>
                 <div class="sidebar__search">
                     <div>
                         <img src="{% static 'management/images/search.svg' %}"
@@ -57,10 +44,6 @@
                              alt="asdf" />
                     </div>
                 </div>
-                <button class="inline-block cursor-pointer rounded-md bg-gray-800 px-4 py-3 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-900">
-                    Button
-                </button>
-                <button class="btn w-64 rounded-full">Button</button>
                 <div class="nav">
                     <div class="nav__list">
                         <a href="#">
@@ -195,7 +178,11 @@
                     </div>
                 </div>
             </nav>
-            <div class="content">{% include 'management/contacts.html' %}</div>
+            <!-- <div class="content"> -->
+            <div class="flex flex-col relative w-full min-h-screen">
+                {% block content %}{% endblock %}
+            </div>
         </div>
     </body>
+    <script src="{% static 'management/js/check.js' %}"></script>
 </html>

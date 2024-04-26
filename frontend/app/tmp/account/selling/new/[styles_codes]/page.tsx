@@ -6,7 +6,7 @@ import { Search } from "@/components/common/svgs";
 import Images from "@/components/product/Images";
 import { IoAddOutline, IoRemoveOutline } from "react-icons/io5";
 import Image from "next/image";
-import { useEffect, useState, MouseEventHandler } from "react";
+import { useCallback, useEffect, useState, MouseEventHandler } from "react";
 
 interface ListingState {
   handling_fee: number;
@@ -47,9 +47,13 @@ export default function Page() {
     calculateListing(defaultPrice, defaultShippingPrice),
   );
 
-  const updateListing = (newPrice: number, shipingPrice: number) => {
+  // const updateListing = (newPrice: number, shipingPrice: number) => {
+  //   setListing(calculateListing(newPrice, shipingPrice));
+  // };
+  const updateListing = useCallback((newPrice: number, shipingPrice: number) => {
     setListing(calculateListing(newPrice, shipingPrice));
-  };
+  }, [setListing]);
+  
 
   const adjustPrice = (amount: number) => {
     const newPrice = listing.price + amount;
@@ -70,7 +74,8 @@ export default function Page() {
 
   useEffect(() => {
     updateListing(defaultPrice, defaultShippingPrice);
-  }, [defaultPrice]);
+  }, [updateListing]);
+  
   return (
     <>
       <Header button={false} title="Sell Items" breadCrum="Back" />

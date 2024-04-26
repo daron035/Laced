@@ -34,7 +34,7 @@ const AccordionItem = ({ faq, active, onToggle }: any) => {
         onClick={onToggle}
       >
         <Image src="/12.svg" width={48} height={48} alt="asf" />
-        <span className="uppercase ">{question}</span>
+        <span className="uppercase">{question}</span>
         <span className="ml-auto">
           {active ? <IoRemoveOutline size={26} /> : <IoAddOutline size={26} />}
         </span>
@@ -44,7 +44,7 @@ const AccordionItem = ({ faq, active, onToggle }: any) => {
         className={`h-0 duration-200 ease-in-out`}
         style={
           active
-            ? { height: `${contentEl.current.scrollHeight}px` }
+            ? { height: `${contentEl.current!.scrollHeight}px` }
             : { height: "0px" }
         }
       >

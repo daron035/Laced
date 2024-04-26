@@ -17,7 +17,7 @@ export default function Page({ params }: Props) {
 
   useEffect(() => {
     const { uid, token } = params;
-
+  
     activation({ uid, token })
       .unwrap()
       .then(() => {
@@ -29,7 +29,8 @@ export default function Page({ params }: Props) {
       .finally(() => {
         router.push("/users/sign_in");
       });
-  }, []);
+  }, [activation, params, router]);
+  
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 pt-48 pb-80 lg:px-8">

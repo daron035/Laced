@@ -6,20 +6,23 @@ import Header from "../product/Header";
 import { Size } from "@/utils/countries.utils";
 
 type Props = {
-  data: Size[];
+  data: any;
+  sizeData: Size[];
 };
 
-export default function Info({ data }: Props) {
+export default function Info({ data, sizeData }: Props) {
   return (
     <div className="shrink-0 w-[420px] pt-[32px]">
-      <Header
-        brand={"AIR JORDAN"}
-        sku={"DH6927-161"}
-        name={"AIR JORDAN 4 RETRO RED CEMENT"}
-      />
-      <Actions data={data} />
+      <Header brand={data.brand} sku={data.sku} name={data.name} />
+      <Actions data_matrix={sizeData} product_id={data.id} />
       <Accordion />
-      <Details />
+      <Details
+        brand={data.brand}
+        categories={data.categories}
+        colour={data.colour}
+        description={data.description}
+        year_released={data.year_released}
+      />
     </div>
   );
 }

@@ -30,6 +30,8 @@ django = "^4.2.7"
 python-dotenv = "^1.0.0"
 pydantic = "^2.5.3"
 pandas = "^2.2.0"
+mypy = "^1.10.0"
+ipinfo-django = "^2.0.0"
 
 
 [build-system]

@@ -10,10 +10,11 @@ class Country(models.Model):
         ("KZ", "Kazakhstan"),
         ("BY", "Belarus"),
     ]
-    value = models.CharField(max_length=2, choices=COUNTRY_CHOICES, default="RU")
+    iso = models.CharField(max_length=2, choices=COUNTRY_CHOICES, default="RU")
+    # name = models.CharField(max_length=255, verbose_name="Name")
 
     def __str__(self):
-        return self.get_value_display()
+        return self.get_iso_display()
 
     class Meta:
         verbose_name_plural = "Countries"
@@ -21,7 +22,8 @@ class Country(models.Model):
     @classmethod
     def get_default_pk(cls):
         country, created = cls.objects.get_or_create(
-            value="RU",
+            name="Russian Federation",
+            iso = "RU"
             # defaults=dict(description='this is not an exam'),
         )
         return country.pk
@@ -35,10 +37,8 @@ class Currency(models.Model):
         ("KZT", "Kazakhstani Tenge"),
         ("BYN", "Belarusian Ruble"),
     ]
-    value = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default="RUB")
-
-    def __str__(self):
-        return self.get_value_display()
+    iso = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default="RUB")
+    symbol = models.CharField(max_length=255, verbose_name="Symbol")
 
     class Meta:
         verbose_name_plural = "Currencies"
@@ -46,40 +46,42 @@ class Currency(models.Model):
     @classmethod
     def get_default_pk(cls):
         currency, created = cls.objects.get_or_create(
-            value="RUB",
-            # defaults=dict(description='this is not an exam'),
+            iso="RUB",
+            symbol="\u20BD"
         )
         return currency.pk
 
-    # def __str__(self):
-    #     return self.user.username !WRONG
+    def __str__(self):
+        return self.iso
 
 
 class Account(models.Model):
-    LOCALE_CHOICES = [
-        ("ru", "Russian"),
-        ("en", "English"),
-    ]
+    # LOCALE_CHOICES = [
+    #     ("ru", "Russian"),
+    #     ("en", "English"),
+    # ]
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     phone = models.CharField(max_length=50, blank=True, null=True)
     balance = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    profile_complete = models.BooleanField(default=False)
+    # profile_complete = models.BooleanField(default=False)
     currency = models.ForeignKey(
         "Currency",
         on_delete=models.SET_DEFAULT,
-        default=Currency.get_default_pk,
+        # default=Currency.get_default_pk,
+        default=3,
         related_name="preferred_currency",
     )
-    location = models.ForeignKey(
+    country = models.ForeignKey(
         "Country",
         on_delete=models.SET_DEFAULT,
-        default=Country.get_default_pk,
+        # default=Country.get_default_pk,
+        default=1,
         related_name="preferred_location",
     )
     # locale = models.CharField(max_length=2, choices=LOCALE_CHOICES, default="ru")
-    locale = models.CharField(
-        max_length=2, choices=LOCALE_CHOICES, null=True, blank=True
-    )
+    # locale = models.CharField(
+    #     max_length=2, choices=LOCALE_CHOICES, null=True, blank=True
+    # )
 
     def __str__(self):
         return str(self.user)
@@ -130,3 +132,4 @@ def create_profile(sender, instance, created, **kwargs):
 # def user_logged_in_handler(sender, request, user, **kwargs):
 #     # print(f"Пользователь {user.username} успешно вошел в систему.")
 #     print(f"Пользователь  успешно вошел в систему.")
+

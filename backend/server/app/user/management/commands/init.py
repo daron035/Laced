@@ -11,6 +11,7 @@ class Command(BaseCommand):
 
         call_command("makemigrations")
         call_command("migrate")
+        call_command("loaddata", "category.json", "variation.json", "variation_option.json", "product.json", "image.json", "currency.json", "country.json")
 
         if not User.objects.filter(first_name="root").exists():
             User.objects.create_superuser(

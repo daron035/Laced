@@ -11,6 +11,7 @@ import { getCookie, setCookie, deleteCookie } from "@/utils";
 
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
+  // baseUrl: `http://127.0.0.1:8000/api`,
   baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
   prepareHeaders: (headers) => {
     // getCookie("");

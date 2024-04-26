@@ -1,37 +1,47 @@
-const Description = () => {
+const Description = ({ data }: { data: string }) => {
   return (
     <div className="mb-8">
       <h4 className="mb-2 text-[18px] text-[#101010]">Description</h4>
-      <div className="mb-4 leading-normal">
-        Lorem ipsum dolor sit amet, officia excepteur ex fugiat reprehenderit
-        enim labore culpa sint ad nisi Lorem pariatur mollit ex esse
-        exercitation amet. Nisi anim cupidatat excepteur officia. Reprehenderit
-        nostrud nostrud ipsum Lorem est aliquip amet voluptate voluptate dolor
-        minim nulla est proident. Nostrud officia pariatur ut officia. Sit irure
-        elit esse ea nulla sunt ex occaecat reprehenderit commodo officia dolor
-        Lorem duis laboris cupidatat officia voluptate. Culpa proident
-        adipisicing id nulla nisi laboris ex in Lorem sunt duis officia eiusmod.
-        Aliqua reprehenderit commodo ex non excepteur duis sunt velit enim.
-        Voluptate laboris sint cupidatat ullamco ut ea consectetur et est culpa
-        et culpa duis.
-      </div>
+      <div className="mb-4 leading-normal">{data}</div>
     </div>
   );
 };
-export default function Details() {
-  const details = ["Brand", "Categories", "Year realesed", "Colour"];
+
+type Props = {
+  brand: string;
+  categories: string[];
+  description: string;
+  year_released: string;
+  colour: string;
+};
+
+export default function Details({
+  brand,
+  categories,
+  description,
+  year_released,
+  colour,
+}: Props) {
+  const detail = [
+    { Brand: brand },
+    { Categories: categories?.join(", ") },
+    { "Year realesed": year_released },
+    { Colour: colour },
+  ];
 
   return (
     <>
-      <Description />
+      <Description data={description} />
       <div>
         <h4 className="mb-2 text-[18px] text-[#101010]">Details</h4>
         <div className="divide-y">
-          {details.map((name) => {
+          {detail.map((item, index) => {
+            const [key, value] = Object.entries(item)[0];
+            if (!value) return null;
             return (
-              <dl className="py-4 flex gap-x-2 text-[14px]">
-                <dt>{name}</dt>
-                <dd className="ml-auto text-[#101010]">Nike</dd>
+              <dl key={index} className="py-4 flex gap-x-2 text-[14px]">
+                <dt>{key}</dt>
+                <dd className="ml-auto text-[#101010]">{value}</dd>
               </dl>
             );
           })}

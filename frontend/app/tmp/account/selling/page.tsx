@@ -25,20 +25,24 @@ const noRes = (
       <h3 className="uppercase text-gray-950 text-center text-lg mt-1">
         No results found
       </h3>
-      <p className=" text-center mt-1">Sorry, we couldn't find any products.</p>
+      <p className="text-center mt-1">Sorry, we couldn&apos;t find any products.</p>
     </div>
   </div>
 );
 
 export default function Page() {
-  const { data, isLoading, isSuccess } = useRetrieveSaleItemsQuery();
+  const q = {
+    // style_codes: style_codes || null
+    style_codes: null
+  };
+  const { data, isLoading, isSuccess } = useRetrieveSaleItemsQuery(q);
 
   const [activeTab, setActiveTab] = useState(0);
   const [tabData, setTabData] = useState([]);
 
   useEffect(() => {
     data;
-  }, [activeTab]);
+  }, [activeTab, data]);
 
   return (
     <div className="w-[960px] pt-12 pb-24 px-10 mx-auto">
@@ -47,6 +51,7 @@ export default function Page() {
         {tabs.map((item, index) => {
           return (
             <li
+              key={index}
               className={`text-gray-950 text-xs pb-3 relative cursor-pointer mr-6 ${
                 index === activeTab
                   ? "after:absolute after:block after:border-b after:border-gray-950 after:w-full after:-bottom-[1px]"

@@ -21,8 +21,7 @@
     "prod": "webpack --watch --mode production",
     "d1": "tailwindcss -i assets/styles/tw.css -o static/css/tw.css --watch",
     "d2": "webpack --watch --mode development",
-    "dv": "concurrently --kill-others \"npm run d1\" \"npm run d2\"",
-    "dev": "webpack --watch --mode development"
+    "dev": "concurrently --kill-others \"npm run d1\" \"npm run d2\""
   },
   "author": "",
   "license": "ISC",

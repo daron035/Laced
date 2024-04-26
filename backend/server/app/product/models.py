@@ -1,4 +1,8 @@
 from django.db import models
+from django.db.models import Min
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
@@ -49,23 +53,30 @@ class Product(models.Model):
         # limit_choices_to={"type": "B"},
     )
     name = models.CharField(max_length=100)
-    # name = models.CharField(_("name"), max_length=100)
-    # title = models.CharField(_("Title"), max_length=100, help_text=_("The title of the book."))
-    quantity = models.PositiveIntegerField(default=0)  # ???
-    # description = models.TextField(blank=True)
-    price = models.DecimalField(
-        max_digits=8,
-        decimal_places=2,
+    min_price_item = models.ForeignKey(
+        "ProductItem",
         null=True,
         blank=True,
-        validators=[MinValueValidator(0)],
+        # on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
+        default=None,
+        related_name="min_price_product",
     )
     is_active = models.BooleanField(default=True)
     slug = models.SlugField(max_length=255, unique=True, verbose_name="slug")
     data = models.JSONField(blank=True, null=True, default=dict)
-    # data = models.JSONField(_("data"), blank=True, null=True, default=dict)
-    # country = models.ManyToManyField("Country", related_name="country")
-    country = models.ManyToManyField(Country, related_name="country")
+
+    @property
+    def qty_in_stock(self):
+        if self.productitem_set:
+            return self.productitem_set.filter(
+                product_id=self.pk, ordered_date=None
+            ).count()
+
+    # @property
+    # def min_price(self):
+    #     if self.productitem_set:
+    #         return self.productitem_set.filter(product_id=self.pk).aggregate(Min('cat_id'))
 
     def __str__(self):
         return self.name
@@ -91,26 +102,6 @@ class Product(models.Model):
     #     return images.first()
 
 
-# def upload_orig_path(instance, filename):
-#     return f"images/{instance.product.brand}/orig/{filename}"
-#
-#
-# def upload_lg_path(instance, filename):
-#     return f"images/{instance.product.brand}/lg/{filename}"
-#
-#
-# def upload_md_path(instance, filename):
-#     return f"images/{instance.product.brand}/md/{filename}"
-#
-#
-# def upload_sm_path(instance, filename):
-#     return f"images/{instance.product.brand}/sm/{filename}"
-#
-#
-# def upload_tn_path(instance, filename):
-#     return f"images/{instance.product.brand}/tn/{filename}"
-
-
 def upload_path(instance, filename):
     return f"images/Laced/{instance.product.category.get(type='B')}/{filename}"
 
@@ -120,34 +111,61 @@ class Image(models.Model):
     image = models.ImageField(upload_to=upload_path)
 
 
+###############################################
 class ProductItem(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    sku = models.CharField(max_length=40)
-    quantity = models.PositiveIntegerField()  # ???
-    # price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    variation = models.ManyToManyField("VariationOption", related_name="product_item")
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, null=False)
+    sku = models.CharField(max_length=40, blank=True)
+    variation = models.ManyToManyField(
+        "VariationOption", related_name="product_item", blank=False
+    )
+    date_added = models.DateTimeField(auto_now_add=True)
+    ordered_date = models.DateTimeField(null=True, blank=True)
+    prices = models.ManyToManyField(Currency, through="Price")
+
+    def __str__(self):
+        return f"{self.id} {self.product.name} (id {self.product.id})"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Check if any two VariationOption instances have the same variation_id
+        variation_ids = set()
+        for variation_option in self.variation.all():
+            if variation_option.variation_id in variation_ids:
+                # Rollback the transaction
+                self.delete()
+                raise ValueError(
+                    "Two VariationOptions with the same variation_id are not allowed."
+                )
+            variation_ids.add(variation_option.variation_id)
+
+
+###############################################
 
 
 class Price(models.Model):
-    product = models.ForeignKey(
-        "ProductItem", related_name="price", on_delete=models.CASCADE
-    )
-    currency = models.ForeignKey(
-        # "Currency", on_delete=models.PROTECT, related_name="price"
-        Currency,
-        on_delete=models.PROTECT,
-        related_name="price",
-    )
-    amount = models.DecimalField(
+    product = models.ForeignKey(ProductItem, on_delete=models.CASCADE)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
+    value = models.DecimalField(
         decimal_places=2,
         max_digits=10,
         validators=[MinValueValidator(0)],
     )
 
     def __str__(self):
-        return f"{self.amount} {self.currency}"
+        return f"{self.currency.symbol} {self.value}"
 
 
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
+
+
+# @receiver(post_save, sender=ProductItem)
+# def create_price(sender, instance, created, *args, **kwargs):
+#     if created:
+#         # r = kwargs.get('rub')
+#         # r =kwargs.pop('RUB', None)
+#         r = args[0]
+#         Price.objects.create(product=instance, RUB=r)
 class Variation(models.Model):
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=40)
@@ -158,10 +176,15 @@ class Variation(models.Model):
 
 class VariationOption(models.Model):
     variation = models.ForeignKey(Variation, on_delete=models.PROTECT)
-    value = models.CharField(max_length=40, blank=True)
+    value = models.CharField(max_length=40, null=True, blank=True)
     data = models.JSONField(blank=True, default=dict)
 
     def __str__(self):
+        if self.value is None:
+            dict_as_string = " | ".join(
+                [f"{key} {value}" for key, value in self.data.items()]
+            )
+            return dict_as_string
         return str(self.value)
 
 
@@ -202,3 +225,16 @@ class AvailableVariationOption(models.Model):
 class Carousel(models.Model):
     name = models.CharField(max_length=100)
     products = models.ManyToManyField(Product, related_name="carousel")
+
+
+# @receiver(m2m_changed, sender=ProductItem.variation.through)
+# def check_option_variation(sender, instance, action, pk_set, **kwargs):
+#     if action == 'validate_variations':
+#         new_variations = VariationOption.objects.filter(pk__in=pk_set).values_list('variation_id', flat=True)
+#         if len(set(new_variations)) != len(new_variations):
+#             raise ValidationError("Duplicate variation detected in Options.")
+#     elif action == 'pre_add':
+#         existing_variations = instance.variation.values_list('variation_id', flat=True)
+#         new_variations = VariationOption.objects.filter(pk__in=pk_set).values_list('variation_id', flat=True)
+#         if set(existing_variations) & set(new_variations):
+#             raise ValidationError("Duplicate variation detected in Options.")

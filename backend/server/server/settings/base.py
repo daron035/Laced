@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # 3rd party
+    "debug_toolbar",
     "rest_framework",
     "corsheaders",
     "djoser",
@@ -51,19 +52,33 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     # "django.middleware.locale.LocaleMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "app.product.middleware.SimpleMiddleware",
+    "ipinfo_django.middleware.IPinfoMiddleware",
+    # "app.product.middleware.SimpleMiddleware",
     # "app.user.middleware.AnonymousUserTrackingMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "app.purchases.middleware.AccountMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
+IPINFO_TOKEN = "7c77d9047c4e08"
+
+INTERNAL_IPS = ["127.0.0.1"]
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BASE_DIR, "cache"),
+    }
+}
 
 ROOT_URLCONF = "server.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -249,6 +264,12 @@ SOCIAL_AUTH_VK_OAUTH2_SECRET = "ZL0mWfSytO4VWQUU7CJJ"
 # CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+SESSION_SAVE_EVERY_REQUEST = True
+# CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
+# CORS_ALLOW_HEADERS = [
+#     "Content-Type",  # Add this line to allow Content-Type header
+#     # Add any other headers you want to allow here
+# ]
 
 # Email settings
 

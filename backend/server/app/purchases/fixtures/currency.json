@@ -3,35 +3,48 @@
     "model": "purchases.currency",
     "pk": 1,
     "fields": {
-      "value": "RUB"
+      "iso": "USD",
+      "symbol": "\u0024"
     }
   },
   {
     "model": "purchases.currency",
     "pk": 2,
     "fields": {
-      "value": "EUR"
+      "iso": "GBP",
+      "symbol": "\u00A3"
     }
   },
   {
     "model": "purchases.currency",
     "pk": 3,
     "fields": {
-      "value": "USD"
+      "iso": "EUR",
+      "symbol": "\u20AC"
     }
   },
   {
     "model": "purchases.currency",
     "pk": 4,
     "fields": {
-      "value": "KZT"
+      "iso": "RUB",
+      "symbol": "\u20BD"
     }
   },
   {
     "model": "purchases.currency",
     "pk": 5,
     "fields": {
-      "value": "BYN"
+      "iso": "KZT",
+      "symbol": "\u20B8"
+    }
+  },
+  {
+    "model": "purchases.currency",
+    "pk": 6,
+    "fields": {
+      "iso": "BYN",
+      "symbol": "\u20BD"
     }
   }
 ]

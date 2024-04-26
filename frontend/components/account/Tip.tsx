@@ -51,14 +51,21 @@
 import SuggestionItem from "@/components/account/SuggestionItem";
 import { useRetrieveSaleItemsQuery } from "@/redux/features/saleApiSlice";
 
-export default function Tip({ style_codes, handleOnStatusClick }) {
-  const { data } = useRetrieveSaleItemsQuery({});
+interface Props {
+  style_codes: any;
+  handleOnStatusClick: any;
+}
+
+export default function Tip({ style_codes, handleOnStatusClick }: Props) {
+  const { data } = useRetrieveSaleItemsQuery({ style_codes: null });
   // console.log(data);
 
   // Filter out items with SKU 'ID34550'
-  const excludedStyleCodes = style_codes ? style_codes.split(',') : [];
+  const excludedStyleCodes = style_codes ? style_codes.split(",") : [];
   // const filteredResults = data?.results.filter(item => item.sku !== 'ID2350');
-  const filteredResults = data?.results.filter(item => !excludedStyleCodes.includes(item.sku));
+  const filteredResults = data?.results.filter(
+    (item) => !excludedStyleCodes.includes(item.sku),
+  );
 
   return (
     <div>
@@ -71,6 +78,7 @@ export default function Tip({ style_codes, handleOnStatusClick }) {
             year_released={item.year_released}
             sku={item.sku}
             handleOnStatusClick={handleOnStatusClick}
+            queryString={style_codes}
           />
         ))}
     </div>

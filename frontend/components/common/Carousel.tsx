@@ -1,117 +1,96 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import styles from "../../styles/carousel.module.scss";
-
 import { getImgURL } from "@/utils/image.utils";
+import Link from "next/link";
+import ImageWithFallback from "../utils/ImageWithFallback";
 
-interface Props {
-  data: any;
-  title: string | null;
+interface Product {
+  id: number;
+  brand: string;
+  name: string;
+  image: string;
+  slug: string;
+  price_from: {
+    symbol: string;
+    currency: string;
+    value: string;
+  };
 }
 
-export default function Carousel({ data, title }: Props) {
+interface Props {
+  data?: Product[];
+  title?:
+    | "related products"
+    | "recently viewed"
+    | "trending now"
+    | "new arrivals";
+}
+
+function ProductCard({ product }: { product: Product }) {
+  const imageUrl = getImgURL(product.image, "300:300");
+
+  // console.log(product)
+
+  return (
+    <Link href={`/products/${product.slug}`}>
+      <article className={`${styles.item} group cursor-pointer`}>
+        <div className="w-56 h-56 mb-2 overflow-hidden">
+          <div className="group-hover:scale-105 duration-500 select-none">
+            <ImageWithFallback
+              src={imageUrl}
+              width={224}
+              height={224}
+              alt="Product"
+            />
+          </div>
+        </div>
+        <footer className="flex flex-col gap-y-1 px-4 pb-4">
+          <span>{product.name}</span>
+          <span className="text-[#777777]">{product.brand}</span>
+          <span>
+            {product.price_from.symbol}
+            {product.price_from.value}
+          </span>
+        </footer>
+      </article>
+    </Link>
+  );
+}
+
+export default function Carousel({ data: propData, title }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  // const itemWidth = 224; // Ширина каждого элемента
-  const itemWidth = 284; // Ширина каждого элемента
-  const itemsPerScroll = 5; // Количество элементов для прокрутки
+  const itemWidth = 284;
+  const itemsPerScroll = 5;
+
+  const handleScroll = (scrollLeft: number) => {
+    const scrollAmount = itemWidth * itemsPerScroll;
+    return scrollLeft === 0
+      ? containerRef.current!.scrollWidth
+      : scrollLeft - scrollAmount;
+  };
 
   const handleNextClick = () => {
     if (containerRef.current) {
       const container = containerRef.current;
-      const scrollAmount = itemWidth * itemsPerScroll;
-
-      if (
-        container.scrollLeft + container.clientWidth ===
-        container.scrollWidth
-      ) {
-        container.scrollTo({
-          left: 0,
-          behavior: "smooth",
-        });
-      } else {
-        container.scrollBy({
-          left: scrollAmount,
-          behavior: "smooth",
-        });
-      }
+      container.scrollTo({
+        left: handleScroll(container.scrollLeft + container.clientWidth),
+        behavior: "smooth",
+      });
     }
   };
 
   const handlePrevClick = () => {
     if (containerRef.current) {
       const container = containerRef.current;
-      const scrollAmount = itemWidth * itemsPerScroll;
-
-      if (container.scrollLeft === 0) {
-        container.scrollTo({
-          left: container.scrollWidth,
-          behavior: "smooth",
-        });
-      } else {
-        container.scrollBy({
-          left: -scrollAmount,
-          behavior: "smooth",
-        });
-      }
+      container.scrollTo({
+        left: handleScroll(container.scrollLeft),
+        behavior: "smooth",
+      });
     }
   };
-
-  // Создаем массив с 20 элементами
-  const test_items = Array.from({ length: 20 }, (_, index) => (
-    <article key={index} className={`${styles.item} group cursor-pointer`}>
-      <div className="w-56 h-56 mb-2 overflow-hidden">
-        <div className="group-hover:scale-105 duration-500 select-none">
-          <Image
-            src="/new_balance_650r_white_black_1.jpg"
-            width={224}
-            height={224}
-            alt="Picture of the author"
-          />
-        </div>
-      </div>
-      <footer className="flex flex-col gap-y-1 px-4 pb-4">
-        <span>Nike</span>
-        <span className="text-[#777777]">{`Item ${index + 1}`}</span>
-        <span>$ 99</span>
-      </footer>
-    </article>
-  ));
-
-  const items = Array.from({ length: data.length }, (_, index) => {
-    const prod = data[index];
-    const imageUrl = getImgURL(prod.image);
-
-    // <Image
-    //   src={imageUrl}
-    //   width={224}
-    //   height={224}
-    //   alt="Picture of the author"
-    // />
-    return (
-      <article key={index} className={`${styles.item} group cursor-pointer`}>
-        <div className="w-56 h-56 mb-2 overflow-hidden">
-          <div className="group-hover:scale-105 duration-500 select-none">
-            {imageUrl && (
-              <img
-                src={imageUrl}
-                width="224"
-                height="224"
-                alt="Picture of the author"
-              />
-            )}
-          </div>
-        </div>
-        <footer className="flex flex-col gap-y-1 px-4 pb-4">
-          <span>{prod.name}</span>
-          <span className="text-[#777777]">{`Item ${prod.id}`}</span>
-          <span>$ 99</span>
-        </footer>
-      </article>
-    );
-  });
 
   return (
     <div className="text-[#101010] pt-16">
@@ -132,10 +111,10 @@ export default function Carousel({ data, title }: Props) {
           />
         </div>
       </div>
-      <div>
-        <div className={styles.scroll_container} ref={containerRef}>
-          {items}
-        </div>
+      <div className={styles.scroll_container} ref={containerRef}>
+        {propData?.map((product: Product, index: number) => (
+          <ProductCard key={index} product={product} />
+        ))}
       </div>
     </div>
   );

@@ -11,6 +11,23 @@ import { useCallback, useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Tip from "@/components/account/Tip";
 
+
+interface SaleItem {
+  name: string;
+  image: string;
+  year_released: number;
+  sku: string;
+  // Add other properties as needed
+}
+interface SuggestionItemProps {
+  name: string;
+  image: string;
+  year_released: number; // Add year_released prop
+  sku: string;
+  queryString: string | null;
+}
+
+// export default function Page({ name, image, year_released, sku, queryString }: SuggestionItemProps) {
 export default function Page() {
   const router = useRouter();
   // Generic
@@ -21,13 +38,12 @@ export default function Page() {
   const style_codes = queryParams.get("style_codes");
   // console.log('sdf',style_codes)
 
-  const q = style_codes
-    ? { style_codes: style_codes }
-    : ({} as { style_codes?: string | null });
-
-  // console.log(q);
+  const q = {
+    style_codes: style_codes || null
+  };
+  
+  console.log('2332232', q)
   const { data, isSuccess } = useRetrieveSaleItemsQuery(q);
-  // const { data: h } = useRetrieveSaleItemsQuery({});
 
   const queryStringParams = queryParams.get("style_codes");
 
@@ -62,7 +78,7 @@ export default function Page() {
       }
     },
 
-    [setQueryParams, queryStringParams],
+    [queryParams, setQueryParams, queryStringParams],
   );
 
   return (

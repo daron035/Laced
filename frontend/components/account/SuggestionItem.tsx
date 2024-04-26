@@ -1,10 +1,13 @@
-import Image from "next/image";
 import { getImgURL } from "@/utils/image.utils";
+import ImageWithFallback from "@/utils/ImageWithFallback";
 
 interface Props {
   name: string;
   image: string;
+  year_released: number; // Add year_released prop
+  sku: string;
   handleOnStatusClick: (value: string | undefined) => void;
+  queryString: string | null;
 }
 
 export default function SuggestionItem({
@@ -15,12 +18,18 @@ export default function SuggestionItem({
   handleOnStatusClick,
   queryString,
 }: Props) {
-  const imageUrl = getImgURL(image);
+  const imageUrl = getImgURL(image, "100:100");
 
   return (
     <>
       <div className="py-3 flex items-center border-t border-gray-300 text-gray-950 text-xs">
-        <Image src={imageUrl} width={64} height={64} alt="" className="mr-4" />
+        <ImageWithFallback
+          src={imageUrl}
+          width={64}
+          height={64}
+          alt=""
+          className="mr-4"
+        />
         <div>
           <div>{name}</div>
           <div className="text-[#656667]">

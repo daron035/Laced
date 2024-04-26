@@ -1,4 +1,5 @@
 from django.utils.translation import get_language_from_request
+from django.conf import settings
 
 
 class SimpleMiddleware:
@@ -10,10 +11,12 @@ class SimpleMiddleware:
         # lang_code1 = get_language_from_request(request)
         # lang_code2 = request.LANGUAGE_CODE
 
-        locale = request.COOKIES.get("locale", "en")
+        # locale = request.COOKIES.get("locale", "en")
         # locale = request.COOKIES.get("NEXT_LOCALE", "en")
+        # self.session = request.session
+        # cart = self.session.get("account", None)
         # locale = request.COOKIES
-        request.locale = locale
+        # request.locale = locale
         # print("locale", locale)
 
         response = self.get_response(request)

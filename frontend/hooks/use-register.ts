@@ -33,8 +33,9 @@ export default function useRegister() {
         });
         router.push("/users/sign_in");
       })
-      .catch(() => {
-        toast.error("Failed to register account");
+      .catch((error) => {
+        const errorMessage = Object.values(error.data)[0] as string;
+        toast.error(errorMessage);
       });
   };
 

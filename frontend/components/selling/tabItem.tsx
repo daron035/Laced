@@ -16,7 +16,7 @@ const DifListingSellingButton = (
 );
 
 export default function tabItem({ name, image }: Props) {
-  const imageUrl = getImgURL(image);
+  const imageUrl = getImgURL(image, "300:300");
   console.log(image);
 
   return (

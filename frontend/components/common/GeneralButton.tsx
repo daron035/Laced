@@ -18,7 +18,7 @@ export default function GeneralButton({
   ...rest
 }: Props) {
   const className = cn(
-    "uppercase text-center rounded cursor-pointer",
+    "uppercase text-center rounded cursor-pointer select-none",
     {
       "text-white bg-[#101010] hover:bg-[#656667] duration-200":
         action === "black",
