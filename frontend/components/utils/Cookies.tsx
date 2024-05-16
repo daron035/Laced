@@ -1,12 +1,17 @@
 "use client";
 
 import { GeneralButton, ToggleButton } from "@/components/common";
-import { getCookie, setCookie } from "@/utils";
+import { getCookie, getAllCookies, setCookie } from "@/utils";
 import { useEffect, useState } from "react";
 
-export default function CookieModalView({ view }: { view: boolean }) {
-  const [showCookie, setShowCookie] = useState(view);
+export default function CookieModalView() {
+  const cookies = getAllCookies();
+  const keysToCheck = ["currency", "country"];
+
+  const [showCookie, setShowCookie] = useState(false);
   const [showPreferences, setShowPreferences] = useState(true);
+
+  // console.log(cookies().getAll())
 
   useEffect(() => {
     if (showCookie) {

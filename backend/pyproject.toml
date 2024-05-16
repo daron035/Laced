@@ -34,6 +34,9 @@ mypy = "^1.10.0"
 ipinfo-django = "^2.0.0"
 
 
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

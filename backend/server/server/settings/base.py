@@ -58,11 +58,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "app.purchases.middleware.AccountMiddleware",
+    # "app.purchases.middleware.AccountMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 IPINFO_TOKEN = "7c77d9047c4e08"
+IPINFO_FILTER = lambda request: request.scheme == "http"
+IPINFO_FILTER = None
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -211,7 +213,7 @@ SIMPLE_JWT = {
     # "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     # "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
     # "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=AUTH_COOKIE_ACCESS_MAX_AGE),
+    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=AUTH_COOKIE_REFRESH_MAX_AGE),
 }
 
 DJOSER = {
@@ -292,6 +294,8 @@ SITE_NAME = "Laced"
 # USE_X_FORWARDED_HOST = True
 # CSRF_COOKIE_SECURE = True
 # SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = False
 # SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SPECTACULAR_SETTINGS = {

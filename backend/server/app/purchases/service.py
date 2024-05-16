@@ -2,20 +2,48 @@ from decimal import Decimal
 from rest_framework import status
 from rest_framework.response import Response
 from django.conf import settings
+import ipinfo
+from enum import Enum
 
 from app.product.serializers import ProductSerializer, CartProductSerializer
-from app.product.models import Product, ProductItem
+from app.product.models import Price, Product, ProductItem
 
 
-class Account:
+class Currency(Enum):
+    US = "USD"
+    UK = "GBP"
+    EU = "EUR"
+    RU = "RUB"
+    KZ = "KZT"
+    BY = "BYN"
+
+
+class Preferences:
     def __init__(self, request):
         self.request = request
         self.session = request.session
-        account = self.session.get("account", None)
-        if account is None:
-            # save an empty account in session
-            account = self.session["account"] = {}
-        self.account = account
+        preferences = self.session.get("preferences", None)
+        if preferences is None:
+            # save an empty preferences in session
+            preferences = self.session["preferences"] = {}
+        self.preferences = preferences
+        if "preferred_country" and "preferred_currency" not in self.preferences:
+            if request.user.is_authenticated:
+                country = request.user.account.country.iso
+                currency = request.user.account.currency.iso
+            else:
+                # country = get_ip_details("168.156.54.5").country
+                country = "US"
+                print("ASDIOFJIQWEJFPIOEQRJFIOJREIFJ389J8394JFASDJFKLSDJFKLASJDF")
+                currency = Currency[country].value
+            self.preferences["preferred_country"] = country
+            self.preferences["preferred_currency"] = currency
+            print(self.preferences)
+            self.save()
+            # request.session.modified = True
+
+    def save(self):
+        self.session.modified = True
 
     def verify(self):
         cookies_list = ["preferred_currency", "preferred_country"]
@@ -50,22 +78,31 @@ class Cart:
         product_item_id = str(product_item_id)
 
         prod_item = ProductItem.objects.get(pk=product_item_id)
-        price_item = "{:.2f}".format(float(prod_item.RUB))
-
+        preferences = self.session.get("preferences")
+        if preferences:
+            # print("2323232323", currency)
+            price = Price.objects.get(
+                product=prod_item, currency=preferences["currency_iso"]
+            )
+        # # price_item = "{:.2f}".format(float(prod_item.RUB))
+        else:
+            price = Price.objects.get(product=prod_item, currency=4)
+        #
         if product_item_id in self.cart:
             raise ValueError("Product already exists in the cart.")
         if product_item_id not in self.cart:
             self.cart[product_item_id] = {
                 "quantity": 0,
-                # "price": prod_item.price.RUB,
-                "price": price_item,
+                #         # "price": prod_item.price.RUB,
+                "price": price.value,
             }
-            # self.cart[product_id] = {"quantity": 0, "price": str(product["price"])}
+        #     # self.cart[product_id] = {"quantity": 0, "price": str(product["price"])}
+        print(1)
         if overide_quantity:
             self.cart[product_item_id]["quantity"] = quantity
         else:
             self.cart[product_item_id]["quantity"] += quantity
-
+        #
         self.save()
         print(self.cart)
 

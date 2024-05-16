@@ -30,7 +30,8 @@ export default function useLogin() {
       .then(() => {
         dispatch(setAuth());
         toast.success("Logged In");
-        router.push("/");
+        // router.push("/");
+        window.location.href = "/"; // due to Footer
       })
       .catch(() => {
         toast.error("Failed to log in");

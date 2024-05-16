@@ -32,6 +32,7 @@ class Country(models.Model):
 class Currency(models.Model):
     CURRENCY_CHOICES = [
         ("USD", "US Dollar"),
+        ("GBP", "British pound sterling"),
         ("EUR", "Euro"),
         ("RUB", "Russian Ruble"),
         ("KZT", "Kazakhstani Tenge"),
@@ -46,6 +47,8 @@ class Currency(models.Model):
     @classmethod
     def get_default_pk(cls):
         currency, created = cls.objects.get_or_create(
+            # iso="USD",
+            # symbol="\u0024"
             iso="RUB",
             symbol="\u20BD"
         )
@@ -68,7 +71,8 @@ class Account(models.Model):
         "Currency",
         on_delete=models.SET_DEFAULT,
         # default=Currency.get_default_pk,
-        default=3,
+        default=1,
+        # default=4,
         related_name="preferred_currency",
     )
     country = models.ForeignKey(

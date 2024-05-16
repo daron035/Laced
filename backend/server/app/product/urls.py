@@ -4,6 +4,8 @@ from rest_framework import routers
 from .views import ProductViewSet
 from rest_framework.routers import Route, DynamicRoute, DefaultRouter, SimpleRouter
 
+from .session_views import create_session, preferences
+
 
 class MyCastomRouter(DefaultRouter):
     routes = [
@@ -37,3 +39,7 @@ print(product_router.urls)
 print()
 
 # urlpatterns = [path("", product_router.urls)]
+urlpatterns = [
+    path("cookie/", create_session),
+    path("preferences/", preferences),
+]

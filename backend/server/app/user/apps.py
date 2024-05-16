@@ -9,6 +9,7 @@ class UserConfig(AppConfig):
     def ready(self):
         # Implicitly connect signal handlers decorated with @receiver.
         from . import signals
+        # import app.user.signals
 
         # Explicitly connect a signal handler.
         # request_finished.connect(signals.user_signed_up)

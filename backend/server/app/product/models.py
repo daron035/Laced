@@ -53,15 +53,15 @@ class Product(models.Model):
         # limit_choices_to={"type": "B"},
     )
     name = models.CharField(max_length=100)
-    min_price_item = models.ForeignKey(
-        "ProductItem",
-        null=True,
-        blank=True,
-        # on_delete=models.DO_NOTHING,
-        on_delete=models.SET_NULL,
-        default=None,
-        related_name="min_price_product",
-    )
+    # min_price_item = models.ForeignKey(
+    #     "ProductItem",
+    #     null=True,
+    #     blank=True,
+    #     on_delete=models.DO_NOTHING,
+    #     # on_delete=models.SET_NULL,
+    #     default=None,
+    #     related_name="min_price_product",
+    # )
     is_active = models.BooleanField(default=True)
     slug = models.SlugField(max_length=255, unique=True, verbose_name="slug")
     data = models.JSONField(blank=True, null=True, default=dict)

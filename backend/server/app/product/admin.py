@@ -66,18 +66,49 @@ class ProductAdmin(admin.ModelAdmin):
         ),
     ]
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("category", "productitem_set")
+
+        # return super().get_queryset(request).select_related("product_item").prefetch_related("price")
+        # return super().get_queryset(request).prefetch_related("currency")
+    
+    # @admin.display(description="Min price")
+    # def get_min_price_item(self, obj):
+    #     if obj.data["min_price_item"]:
+    #         prices = Price.objects.filter(product=obj.data["min_price_item"])
+    #         ids = [obj.data["min_price_item"]] + [price for price in prices]
+    #         return mark_safe("id " + "<br>".join(map(str, ids)))
+    #     else:
+    #         return None
+        
     @admin.display(description="Min price")
     def get_min_price_item(self, obj):
-        if obj.min_price_item:
-            prices = Price.objects.filter(product=obj.min_price_item)
-            ids = [obj.min_price_item.pk] + [price for price in prices]
+        min_price_item = obj.data.get("min_price_item")
+        print(type(min_price_item))
+        if min_price_item:
+            prices = Price.objects.filter(product_id=min_price_item)
+            ids = [min_price_item] + [f"{price.currency.symbol} {price.value}" for price in prices]
             return mark_safe("id " + "<br>".join(map(str, ids)))
         else:
             return None
+    # @admin.display(description="Min price")
+    # def get_min_price_item(self, obj):
+    #     if obj.min_price_item:
+    #         prices = Price.objects.filter(product=obj.min_price_item)
+    #         ids = [obj.min_price_item.pk] + [price for price in prices]
+    #         return mark_safe("id " + "<br>".join(map(str, ids)))
+    #     else:
+    #         return None
     
     @admin.display(description="In Stock")
     def get_qty_in_stock(self, obj):
         return obj.qty_in_stock
+    # @admin.display(description="In Stock")
+    # def get_qty_in_stock(self, obj):
+    #     # Используем кэширование, чтобы избежать множественных запросов к базе данных
+    #     if not hasattr(obj, '_qty_in_stock_cache'):
+    #         obj._qty_in_stock_cache = obj.productitem_set.filter(product_id=obj.pk, ordered_date=None).count()
+    #     return obj._qty_in_stock_cache
 
     @admin.display(description="IMG")
     def get_img(self, obj):
@@ -87,6 +118,7 @@ class ProductAdmin(admin.ModelAdmin):
     @admin.display(description="Brand")
     def get_brand(self, obj):
         return obj.category.get(type="B")
+
 
     @admin.display(description="Collections")
     def get_collections(self, obj):
@@ -135,12 +167,10 @@ class ImageAdmin(admin.ModelAdmin):
 class PriceInlineFormset(forms.models.BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        currencies = Currency.objects.all()[:3]
+        initial_currency_values = [1, 4]  # список значений для полей currency
         for i, form in enumerate(self.forms):
-            form.initial['currency'] = currencies[i % len(currencies)].pk
-            # form.initial['currency'] = currencies[i % 4].pk
-        # for form, currency in zip(self.forms, currencies[:4]):
-        #     form.initial['currency'] = currency.pk
+            # Устанавливаем значение поля currency для текущей формы
+            form.initial['currency'] = initial_currency_values[i % len(initial_currency_values)]
 
 
 class PriceInline(admin.TabularInline):
@@ -150,46 +180,28 @@ class PriceInline(admin.TabularInline):
     def get_formset(self, request, obj=None, **kwargs):
         formset = super().get_formset(request, obj, **kwargs)
         # Отключаем выбор валюты (currency) в виджете
-        formset.form.base_fields['currency'].disabled = True
+        # formset.form.base_fields['currency'].disabled = True
         if obj:
             formset.extra = 0  # Для редактирования существующего объекта
         else:
-            formset.extra = 3  # Для добавления нового объекта
+            formset.extra = 2  # Для добавления нового объекта
         return formset
     
-
 
 @admin.register(ProductItem)
 class ProductItemAdmin(admin.ModelAdmin):
     list_display = ("id", "product","get_variation","get_prices",)
-    # list_display = ("id", "product","get_variation")
-    # list_display = ("id", "product", "get_variation", "get_prices")
     ordering = ("id",)
-    # readonly_fields = ("get_qty_in_stock",)
-    # readonly_fields = ("get_qty_in_stock",)
     list_display_links = ("id", "product")
-    # filter_horizontal = ("variation",)
     inlines = [PriceInline]
-    # fieldsets = (
-    #     (None, {
-    #         'fields': ('get_qty_in_stock',),  # Добавление поля в fieldsets
-    #     }),
-    # )
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("product").prefetch_related("variation")
+        return super().get_queryset(request).select_related("product").prefetch_related("variation", "price_set", "price_set__currency")
 
     @admin.display(description="Prices")
     def get_prices(self, obj):
-        prices = Price.objects.filter(product=obj)
-        if prices.exists():
-            return " ".join([str(price) for price in prices])
-        return None
-    
-    # @admin.display(description="Quantity in stock")
-    # def get_qty_in_stock(self, obj):
-    #     return obj.qty_in_stock  # Вызов метода get_qty_in_stock
-    # get_qty_in_stock.short_description = 'Quantity in stock'
+        prices = [str(price) for price in obj.price_set.all()]  # получить все цены для данного объекта
+        return " ".join(prices)
     
     def get_variation(self, obj):
         return ", ".join([f"{var.id} | {var}" for var in obj.variation.all()])

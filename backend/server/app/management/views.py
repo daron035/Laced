@@ -1,4 +1,3 @@
-
 from django.views.generic.edit import FormView
 from django.shortcuts import render
 from django.urls.base import reverse_lazy
@@ -46,12 +45,58 @@ def index3(request):
     return render(request, "management/index.html", context=insert_content)
 
 
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+def asde(request):
+    response_string = "sadf"
+    # a = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxNTc2MjM0NiwiaWF0IjoxNzE1MTU3NTQ2LCJqdGkiOiJmNGM5MGZjNWFlMzE0MDc4OTI0MDJhNjdjYTk0YzhmOCIsInVzZXJfaWQiOjF9.8rQGziWh1_gEa79FEotnWe5ZmtuXb3MA-BpNzrJB6Xw"
+    a = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxNTc2MjM0NiwiaWF0IjoxNzE1MTU3NTQ2LCJqdGkiOiJmNGM5MGZjNWFlMzE0MDc4OTI0MDJhNjdjYTk0YzhmOCIsInVzZXJfaWQiOjF9.8rQGziWh1_gEa79FEotnWe5ZmtuXb3MA-BpNzrJB6Xw"
+    token = RefreshToken(a)
+    user_id = token["user_id"]
+    # user = token.user
+    return HttpResponse(user_id)
+
+
+from django.http import HttpResponse
+import ipinfo
+from django.conf import settings
+
+
+def get_ip_details(ip_address=None):
+    ipinfo_token = getattr(settings, "IPINFO_TOKEN", None)
+    ipinfo_settings = getattr(settings, "IPINFO_SETTINGS", {})
+    ip_data = ipinfo.getHandler(ipinfo_token, **ipinfo_settings)
+    ip_data = ip_data.getDetails(ip_address)
+    return ip_data
+
+
+def location(request):
+    ip_data = get_ip_details("168.156.54.5")
+    response_string = "The IP address {} is located at the coordinates {}, which is in the city {}.".format(
+        ip_data.ip, ip_data.loc, ip_data.city
+    )
+    return HttpResponse(response_string)
+
+
 class ProductView(ListView):
     model = Product
     template_name = "management/contacts.html"
     context_object_name = "products"
     paginate_by = 20
     # extra_context = {'title': 'Главная страница'} # просто контекст статичный, мусорный
+
+    def get(self, request, *args, **kwargs):
+        # forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        forwarded_for = request.META.get("REMOTE_ADDR")
+        # print("forwarded_for", forwarded_for)
+        a = location(request)
+        print("ipinfo", a)
+        # print("ipinfo", request.ipinfo.country)
+
+        # work
+        # print("ipinfo", my_view(request))
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         a = self.request.session.session_key
@@ -89,20 +134,23 @@ class AddProductView(LoginRequiredMixin, FormView):
 
 
 def search_product(request):
-    search_text = request.POST.get('search')
+    search_text = request.POST.get("search")
     results = Category.objects.filter(name__icontains=search_text)
-    context = {'results': results}
-    return render(request, 'management/search-results.html', context)
+    context = {"results": results}
+    return render(request, "management/search-results.html", context)
+
 
 # def load_options(request):
 #     cat_id = request.GET.get("type") or request.GET.get("brand")
 #     brands = Category.objects.filter(parent_category_id=cat_id)
 #     return render(request, "management/brand_options.html", {"brands": brands})
 
+
 def load_brands(request):
     cat_id = request.GET.get("type")
     brands = Category.objects.filter(parent_category_id=cat_id)
     return render(request, "management/brand_options.html", {"brands": brands})
+
 
 def load_series(request):
     cat_id = request.GET.get("brand")

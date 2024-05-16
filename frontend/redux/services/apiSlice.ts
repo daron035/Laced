@@ -13,13 +13,16 @@ const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
   // baseUrl: `http://127.0.0.1:8000/api`,
   baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
-  prepareHeaders: (headers) => {
-    // getCookie("");
-    const a = getCookie("csrftoken");
-    // console.log("asd", a);
-    headers.set("Accept-Language", `asdfasiodfuiaosjdfioasjdf`);
+  prepareHeaders(headers) {
     return headers;
   },
+  // prepareHeaders: (headers) => {
+  //   // getCookie("");
+  //   // const a = getCookie("csrftoken");
+  //   // console.log("asd", a);
+  //   // headers.set("Accept-Language", `asdfasiodfuiaosjdfioasjdf`);
+  //   return headers;
+  // },
   credentials: "include",
 });
 

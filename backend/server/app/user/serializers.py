@@ -8,7 +8,6 @@ User = get_user_model()
 class CustomUserSerializer(UserSerializer):
     class Meta:
         model = User
-        # fields = "__all__"
         fields = (
             "id",
             "first_name",
@@ -16,3 +15,16 @@ class CustomUserSerializer(UserSerializer):
             "email",
             "role",
         )
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        print(
+            " wqeiurioqwueriowqueriouqwioeruioquweiroqwioerWERIUIQOETIUWERITOUWIERUTIWEJKJJ"
+        )
+        # request = self.context.get("request")
+        # sessionid = request.COOKIES.get("sessionid", None)
+        # if sessionid:
+        #     print(sessionid)
+        #     representation["sessionid"] = sessionid
+        return representation

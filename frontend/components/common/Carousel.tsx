@@ -6,6 +6,9 @@ import styles from "../../styles/carousel.module.scss";
 import { getImgURL } from "@/utils/image.utils";
 import Link from "next/link";
 import ImageWithFallback from "../utils/ImageWithFallback";
+import { getCookie, setCookie, deleteCookie } from "@/utils";
+
+
 
 interface Product {
   id: number;
@@ -32,7 +35,10 @@ interface Props {
 function ProductCard({ product }: { product: Product }) {
   const imageUrl = getImgURL(product.image, "300:300");
 
-  // console.log(product)
+  const a = getCookie("currency")
+
+  const priceValue = product.price_from.value
+  const formattedPrice = priceValue ? (Number.isInteger(parseFloat(priceValue)) ? product.price_from.symbol + parseFloat(priceValue).toFixed(0) : product.price_from.symbol + parseFloat(priceValue).toFixed(2)) : "";
 
   return (
     <Link href={`/products/${product.slug}`}>
@@ -51,8 +57,7 @@ function ProductCard({ product }: { product: Product }) {
           <span>{product.name}</span>
           <span className="text-[#777777]">{product.brand}</span>
           <span>
-            {product.price_from.symbol}
-            {product.price_from.value}
+            {formattedPrice}
           </span>
         </footer>
       </article>
@@ -61,6 +66,7 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function Carousel({ data: propData, title }: Props) {
+  console.log('propData',propData)
   const containerRef = useRef<HTMLDivElement>(null);
   const itemWidth = 284;
   const itemsPerScroll = 5;

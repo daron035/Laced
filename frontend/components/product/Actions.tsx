@@ -45,7 +45,8 @@ export default function Actions({
   });
   const selectedSize = allSizes[state.sizeIndex]; // [33, 3, 36, [130, 160]]
   const currencies: string[] = data_matrix[0][data_matrix[0].length - 1]; // ["gbp", "eur"]
-  const [currencyIcon, currencyID] = getPrice(getCookie('currency')!, currencies); // [0] => "usd"
+  // const [currencyIcon, currencyID] = getPrice(getCookie('currency')!, currencies); // [0] => "usd"
+  const [currencyIcon, currencyID] = getPrice("usd", currencies); // [0] => "usd"
 
   const handleCountryClick = (index: number) => {
     setState((prevState) => ({

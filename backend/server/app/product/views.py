@@ -1,26 +1,13 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import NotFound
-from rest_framework import status
-from rest_framework import generics, viewsets
-from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import mixins
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import (
-    AllowAny,
-    IsAuthenticatedOrReadOnly,
-    IsAdminUser,
-    IsAuthenticated,
-)
-from pprint import pprint
-
+from rest_framework import status
 from app.product.permissions import IsAdminOrReadOnly
 
 from .models import Product
 from .serializers import ProductSerializer, GeneralProductSerializer
+from .session_views import session_currency
 
 
 class SaleProductPagination(PageNumberPagination):
@@ -38,7 +25,7 @@ class ProductViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(data__price__isnull=False, is_active=True)
+        return queryset.filter(data__min_price_item__isnull=False, is_active=True)
         # return queryset.filter(min_price_item__isnull=False, is_active=True)
 
     def get_serializer_class(self):
@@ -73,22 +60,17 @@ class ProductViewSet(ModelViewSet):
         # permission_classes=[AllowAny],
     )
     def related_products(self, request):
-        # print('2332')
-        # print(request.COOKIES.get("currency"))
         queryset = self.get_queryset()[:3]
-        serializer = self.get_serializer(queryset, many=True)
-
-        # page = self.paginate_queryset(queryset)
-        # if page is not None:
-        #     serializer = self.get_serializer(page, many=True)
-        #     return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-        return Response(
-            {"message": "Price drops action executed successfully"},
-            status=status.HTTP_200_OK,
+        currency_id = session_currency(request)
+        context = {}
+        if currency_id is not None:
+            context["preferences.currency__id"] = currency_id
+        serializer = self.get_serializer(
+            queryset,
+            many=True,
+            context=context,
         )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(
         methods=["get"],
@@ -98,14 +80,4 @@ class ProductViewSet(ModelViewSet):
         queryset = self.get_queryset()[:3]
         serializer = self.get_serializer(queryset, many=True)
 
-        # page = self.paginate_queryset(queryset)
-        # if page is not None:
-        #     serializer = self.get_serializer(page, many=True)
-        #     return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-        return Response(
-            {"message": "Price drops action executed successfully"},
-            status=status.HTTP_200_OK,
-        )

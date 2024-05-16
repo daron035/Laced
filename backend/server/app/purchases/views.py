@@ -16,6 +16,7 @@ class CartAPI(APIView):
     """
 
     def get(self, request, format=None):
+        return Response(status=status.HTTP_200_OK)
         cart = Cart(request)
 
         print(1)
@@ -80,7 +81,7 @@ class CartAPI(APIView):
             return Response(
                 {"message": "Cart is cleared"}, status=status.HTTP_205_RESET_CONTENT
             )
-    
+
         product = request.data["id"]
         cart.remove(product)
         return Response({"message": "Item removed"}, status=status.HTTP_202_ACCEPTED)

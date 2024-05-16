@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
 )
+from djoser.views import UserViewSet
 
 
 class CustomProviderAuthView(ProviderAuthView):
@@ -39,7 +40,7 @@ class CustomProviderAuthView(ProviderAuthView):
 
         return response
 
-
+from .signals import my_signal
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -47,6 +48,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         if response.status_code == 200:
             access_token = response.data.get("access")
             refresh_token = response.data.get("refresh")
+            my_signal.send(sender=None, cookies=self.request.COOKIES, access_token=access_token, request=self.request, response=response, arg2='arg2')
 
             response.set_cookie(
                 "access",
@@ -127,3 +129,16 @@ class LogoutView(APIView):
         response.delete_cookie("refresh")
 
         return response
+
+
+# class UserViewSet(UserViewSet):
+#     def retrieve(self, request, *args, **kwargs):
+#         response = super().retrieve(request, *args, **kwargs)
+#         # Дополнительная информация, которую вы хотите добавить к ответу
+#         additional_info = {
+#             "custom_field": "Custom value",
+#             # Добавьте любые другие поля или логику, которую вам нужно вернуть
+#         }
+#         # Добавляем дополнительную информацию к ответу
+#         response.data.update(additional_info)
+#         return response

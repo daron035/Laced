@@ -20,8 +20,9 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class PriceSerializer(serializers.ModelSerializer):
-    symbol = serializers.CharField(source='currency.symbol', read_only=True)
-    currency = serializers.CharField(source='currency.iso', read_only=True)
+    symbol = serializers.CharField(source="currency.symbol", read_only=True)
+    currency = serializers.CharField(source="currency.iso", read_only=True)
+
     class Meta:
         model = Price
         fields = ("symbol", "currency", "value")
@@ -38,16 +39,34 @@ class GeneralProductSerializer(serializers.ModelSerializer):
 
     def get_brand(self, obj):
         return obj.category.get(type="B").name
-    
-    # def get_price_from(self, obj):
-    #     # prices = Price.objects.filter(product=obj.min_price_item)
-    #     prices = Price.objects.filter(product=obj.data['price'])
-    #     return PriceSerializer(prices, many=True).data
+
     def get_price_from(self, obj):
-        currency_cookie = self.context.get("request").COOKIES.get('currency')
-        print(currency_cookie)
+        currency = self.context.get("preferences.currency__id")
+        if currency:
+            prices = Price.objects.filter(
+                product=obj.data["min_price_item"], currency__id=currency
+            ).first()
+            return PriceSerializer(prices).data
+        else:
+            prices = Price.objects.filter(product=obj.data["min_price_item"])
+        return PriceSerializer(prices, many=True).data
+        # if not currency:
+        #     prices = Price.objects.filter(
+        #         product=obj.data["min_price_item"], currency__iso=1
+        #     )
+        # prices = Price.objects.filter(product=obj.data["min_price_item"])
+        # def get_price_from(self, obj):
+        #     # currency_cookie = self.context.get("request").COOKIES.get('currency')
+        #     currency_cookie = self.context.get("request").COOKIES.get('currency')
+        #     # self.session.get(settings.CART_SESSION_ID, None)
+        #     request.session["currency"]
+        #     request.session[""]
+
+        # print(currency_cookie)
         if currency_cookie:
-            price = Price.objects.get(product=obj.min_price_item, currency__iso=currency_cookie)
+            price = Price.objects.get(
+                product=obj.min_price_item, currency__iso=currency_cookie
+            )
             if price:
                 return PriceSerializer(price).data
         else:
