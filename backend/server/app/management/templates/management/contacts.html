@@ -1,0 +1,115 @@
+{% extends 'management/index.html' %}
+{% block content %}
+    <div>
+        <header>
+            <div>
+                <div>Contacts</div>
+                <a href="{% url 'add_product' %}">
+                    <button class="btn btn-secondary btn-sm">Add item</button>
+                </a>
+            </div>
+            <div>
+                <div class="toolbar">
+                    <span>All</span>
+                    <span>Leads</span>
+                    <span>Customer</span>
+                </div>
+            </div>
+        </header>
+        <div>
+            <table id="myTable">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox"
+                                   id="selectAll"
+                                   class="checkbox checkbox-sm align-middle" />
+                        </th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>SKU</th>
+                        <th>Brand</th>
+                        <th>Price</th>
+                        <th>Is active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td class="w-5">
+                                <!-- <input type="checkbox" checked="checked" class="checkbox checkbox-sm" /> -->
+                                <input type="checkbox" class="checkbox checkbox-sm align-middle" />
+                            </td>
+                            <td class="text-center">1</td>
+                            <td>{{ product.name }}</td>
+                            <td>info@htmlbase.ru</td>
+                            <td>info@htmlbase.ru</td>
+                            <td>info@htmlbase.ru</td>
+                            <td>
+                                <input type="checkbox" class="checkbox checkbox-sm align-middle" />
+                            </td>
+                            <td>
+                                <div class="dropdown dropdown-hover dropdown-left">
+                                    <div tabindex="0"
+                                         role="button"
+                                         class="flex justify-center items-center w-6 h-7 rounded cursor-pointer hover:bg-gray-200 ease-in-out duration-200">
+                                        <span class="text-xl leading-none">&vellip;</span>
+                                    </div>
+                                    <ul tabindex="0"
+                                        class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-28">
+                                        <li>
+                                            <a>Item 1</a>
+                                        </li>
+                                        <li>
+                                            <a>Item 2</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if is_paginated %}
+        <div class="sticky bottom-0 h-12 w-full py-2 px-4 bg-white border-t border-l ml-[-1px] flex justify-between items-center">
+            <div>
+                <label class="mr-3">Page</label>
+                <input type="number"
+                       value="1"
+                       class="bg-transparent rounded border border-gray-300 px-3 w-20 h-7">
+                <span class="ml-2">of 5</span>
+            </div>
+            <div class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">
+                        <div class="w-8 h-8 rounded bg-gray-100 flex justify-center items-center cursor-pointer hover:bg-gray-300 ease-in-out duration-200">
+                            <span>&lt;</span>
+                        </div>
+                    </a>
+                {% else %}
+                    <a href="?page={{ paginator.num_pages }}">
+                        <div class="w-8 h-8 rounded bg-gray-100 flex justify-center items-center cursor-pointer hover:bg-gray-300 ease-in-out duration-200">
+                            <span>&lt;</span>
+                        </div>
+                    </a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">
+                        <div class="w-8 h-8 rounded bg-gray-100 flex justify-center items-center cursor-pointer hover:bg-gray-300 ease-in-out duration-200">
+                            <span>&gt;</span>
+                        </div>
+                    </a>
+                {% else %}
+                    <a href="?page=1">
+                        <div class="w-8 h-8 rounded bg-gray-100 flex justify-center items-center cursor-pointer hover:bg-gray-300 ease-in-out duration-200">
+                            <span>&gt;</span>
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
+            <!-- </div> -->
+        </div>
+    {% endif %}
+{% endblock %}

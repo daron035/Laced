@@ -1,0 +1,100 @@
+// @use "./variable" as c
+@import "./variable.sass"
+
+.hdr
+  // color: c.$black
+
+  position: sticky
+  top: 0
+  z-index: 3
+
+  .hdr__inner
+    display: flex
+    background-color: white
+    justify-content: center
+    box-shadow: 0 1px 0px rgba(0,0,0,0.05)
+    color: $black
+    font-size: 14px
+    line-height: 1.4
+    width: 100%
+    height: 72px
+    // padding: 0 40px
+    padding: 0 40px 0 40px
+    display: flex
+
+    .hdr__logo
+      height: 100%
+      color: red
+      cursor: pointer
+
+    .logo_nav
+      height: 100%
+
+  .nav
+    height: 100%
+    margin-left: auto
+    margin-right: 60px
+
+    .nav__list
+      height: 100%
+      display: flex
+      align-items: center
+      
+      .nav__item
+        height: 100%
+
+        .btn
+          height: 100%
+          padding: 24px 
+          border-bottom: 2px solid transparent
+
+        .btn:hover
+          border-bottom: 2px solid
+
+.dropdown_content
+  display: none
+  position: absolute
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2)
+  z-index: 1
+  a 
+    display: block
+    color: black
+    font-weight: 400
+    min-width: 160px
+    background-color: #FAF9F8
+    padding: 16px 24px
+    text-decoration: none
+    // font-size: 0.875rem
+    font-size: 14px
+    color: #656667
+
+.dropdown_content a:hover
+  color: $black
+
+
+.nav__item:hover .dropdown_content
+  display: block
+
+.hdr__burger
+  display: none
+  height: 100%
+  align-items: center
+  padding: 24px 16px 24px 0
+
+
+@media (max-width: $md) 
+  // .hdr 
+  //   .hdr__inner
+  //     padding: 0 40px
+  .hdr__burger
+    display: block
+  .nav
+    display: none
+  .hdr__actions
+    margin-left: auto
+@media (min-width: $lg) 
+  .hdr 
+    .hdr__inner
+      padding: 0 15rem
+
+

@@ -1,0 +1,23 @@
+.menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.menu_item {
+  border: 1px solid #ededed;
+  margin: -1px 0 0 -1px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  transition: border 0.2s ease-in-out;
+  cursor: pointer;
+
+  .arrow {
+    margin-left: auto;
+  }
+
+  &:hover {
+    z-index: 1;
+    border: 1px solid #141516;
+  }
+}

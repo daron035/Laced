@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Management</title>
+        <link type="text/css"
+              href="{% static 'management/css/styles.css' %}"
+              rel="stylesheet" />
+        <link type="text/css" href="{% static 'css/tw.css' %}" rel="stylesheet" />
+        <link type="text/css"
+              href="{% static 'management/css/contacts.css' %}"
+              rel="stylesheet" />
+        <link rel="stylesheet"
+              type="text/css"
+              href="{% static 'management/css/table.css' %}" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="{% static 'bundle.js' %}"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description"
+              content="A layout example that shows off a blog page with a list of posts." />
+    </head>
+    <body>
+        <div class="wrapper">
+            <nav class="sidebar">
+                <div class="sidebar__hdr">
+                    <img src="{% static 'management/images/logo.svg' %}"
+                         width="auto"
+                         height="100%"
+                         alt="logo" />
+                    <span style="margin-left: 20px">Name</span>
+                </div>
+                <div class="sidebar__search">
+                    <div>
+                        <img src="{% static 'management/images/search.svg' %}"
+                             width="16px"
+                             height="16px"
+                             alt="asdf" />
+                    </div>
+                    <input type="text" placeholder="Search" style="font-size: 14px;">
+                    <div>
+                        <img src="{% static 'management/images/slash.svg' %}"
+                             width="16px"
+                             height="16px"
+                             alt="asdf" />
+                    </div>
+                </div>
+                <div class="nav">
+                    <div class="nav__list">
+                        <a href="#">
+                            <div class="nav_item">
+                                <svg stroke="currentColor"
+                                     fill="none"
+                                     stroke-width="2"
+                                     viewBox="0 0 24 24"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     focusable="false"
+                                     aria-hidden="true"
+                                     class="react-icon"
+                                     height="1.1em"
+                                     width="1.1em"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" color="#7b7b7b"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22" color="#7b7b7b"></polyline>
+                                </svg>
+                                Dashboard
+                            </div>
+                        </a>
+                        <a href="#">
+                            <div class="nav_item">
+                                <svg stroke="currentColor"
+                                     fill="none"
+                                     stroke-width="2"
+                                     viewBox="0 0 24 24"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     focusable="false"
+                                     aria-hidden="true"
+                                     class="react-icon"
+                                     height="1.1em"
+                                     width="1.1em"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" color="#7b7b7b"></polyline>
+                                    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" color="#7b7b7b">
+                                    </path>
+                                </svg>
+                                Inbox
+                            </div>
+                        </a>
+                        <a href="#">
+                            <div class="nav_item">
+                                <svg stroke="currentColor"
+                                     fill="none"
+                                     stroke-width="2"
+                                     viewBox="0 0 24 24"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     focusable="false"
+                                     aria-hidden="true"
+                                     class="react-icon"
+                                     height="1.1em"
+                                     width="1.1em"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" color="#7b7b7b"></path>
+                                    <circle cx="9" cy="7" r="4" color="#7b7b7b"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" color="#7b7b7b"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" color="#7b7b7b"></path>
+                                </svg>
+                                Contacts
+                            </div>
+                        </a>
+                    </div>
+                    <div class="nav__list">
+                        <div style="color: #7d7d7d; padding: 0 12px; margin: 8px 0;">Tags</div>
+                        <a href="#">
+                            <div class="nav_item">
+                                <svg stroke="currentColor"
+                                     fill="none"
+                                     stroke-width="2"
+                                     viewBox="0 0 24 24"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     focusable="false"
+                                     aria-hidden="true"
+                                     class="react-icon"
+                                     height="1.1em"
+                                     width="1.1em"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" color="#7b7b7b"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22" color="#7b7b7b"></polyline>
+                                </svg>
+                                Dashboard
+                            </div>
+                        </a>
+                        <a href="#">
+                            <div class="nav_item">
+                                <svg stroke="currentColor"
+                                     fill="none"
+                                     stroke-width="2"
+                                     viewBox="0 0 24 24"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     focusable="false"
+                                     aria-hidden="true"
+                                     class="react-icon"
+                                     height="1.1em"
+                                     width="1.1em"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" color="#7b7b7b"></polyline>
+                                    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" color="#7b7b7b">
+                                    </path>
+                                </svg>
+                                Inbox
+                            </div>
+                        </a>
+                        <a href="#">
+                            <div class="nav_item">
+                                <svg stroke="currentColor"
+                                     fill="none"
+                                     stroke-width="2"
+                                     viewBox="0 0 24 24"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     focusable="false"
+                                     aria-hidden="true"
+                                     class="react-icon"
+                                     height="1.1em"
+                                     width="1.1em"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" color="#7b7b7b"></path>
+                                    <circle cx="9" cy="7" r="4" color="#7b7b7b"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" color="#7b7b7b"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" color="#7b7b7b"></path>
+                                </svg>
+                                Contacts
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            <!-- <div class="content"> -->
+            <div class="flex flex-col relative w-full min-h-screen">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </body>
+    <script src="{% static 'management/js/check.js' %}"></script>
+</html>

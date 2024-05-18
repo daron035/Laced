@@ -1,0 +1,23 @@
+[
+  {
+    "model": "purchases.country",
+    "pk": 1,
+    "fields": {
+      "iso": "RU"
+    }
+  },
+  {
+    "model": "purchases.country",
+    "pk": 2,
+    "fields": {
+      "iso": "KZ"
+    }
+  },
+  {
+    "model": "purchases.country",
+    "pk": 3,
+    "fields": {
+      "iso": "BY"
+    }
+  }
+]

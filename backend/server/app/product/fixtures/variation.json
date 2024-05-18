@@ -1,0 +1,10 @@
+[
+  {
+    "model": "product.variation",
+    "pk": 1,
+    "fields": {
+      "category": 1,
+      "name": "Size"
+    }
+  }
+]

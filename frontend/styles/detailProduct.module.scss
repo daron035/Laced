@@ -1,0 +1,21 @@
+.container {
+  box-sizing: inherit;
+  max-width: 1184px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+}
+
+.images {
+  box-sizing: inherit;
+  position: sticky;
+  margin-top: 32px;
+  width: 65%;
+}
+
+.grid {
+  box-sizing: inherit;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  // grid-template-columns: repeat(2, 1fr);
+}

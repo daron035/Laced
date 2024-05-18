@@ -1,0 +1,28 @@
+@import "./variable.sass";
+
+.scroll_container {
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  // width: 100vw; /* Ширина контейнера */
+  width: 100%; /* Ширина контейнера */
+  scroll-behavior: smooth; /* Добавляем анимацию прокрутки */
+  animation-duration: 2s;
+  gap: 10px;
+}
+
+.scroll_container::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  // background-color: #f0f0f0; /* Цвет фона элемента */
+  background-color: white; /* Цвет фона элемента */
+  font-size: 14px; /* Размер шрифта */
+}
