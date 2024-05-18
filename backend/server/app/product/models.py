@@ -142,6 +142,8 @@ class ProductItem(models.Model):
 ###############################################
 
 
+
+# 🚨 product
 class Price(models.Model):
     product = models.ForeignKey(ProductItem, on_delete=models.CASCADE)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
@@ -153,6 +155,9 @@ class Price(models.Model):
 
     def __str__(self):
         return f"{self.currency.symbol} {self.value}"
+    
+    class Meta:
+        ordering = ['currency']
 
 
 # from django.db.models.signals import post_save

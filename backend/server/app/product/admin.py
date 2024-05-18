@@ -5,8 +5,11 @@ from django.db.models import Min, F, Count, Q, Prefetch, Sum
 
 
 from .models import *
+
 # from .signals import validate_option_variation, validate_variations
-from .signals import validate_variations, validate_prices, update_product_entry
+# from .signals import validate_variations, validate_prices, update_product_entry
+from .signals import my_signal
+
 
 
 @admin.register(Category)
@@ -67,11 +70,16 @@ class ProductAdmin(admin.ModelAdmin):
     ]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("category", "productitem_set")
+    
+        return (
+            super()
+            .get_queryset(request)
+            .prefetch_related("category", "productitem_set")
+        )
 
         # return super().get_queryset(request).select_related("product_item").prefetch_related("price")
         # return super().get_queryset(request).prefetch_related("currency")
-    
+
     # @admin.display(description="Min price")
     # def get_min_price_item(self, obj):
     #     if obj.data["min_price_item"]:
@@ -80,17 +88,20 @@ class ProductAdmin(admin.ModelAdmin):
     #         return mark_safe("id " + "<br>".join(map(str, ids)))
     #     else:
     #         return None
-        
+
     @admin.display(description="Min price")
     def get_min_price_item(self, obj):
         min_price_item = obj.data.get("min_price_item")
         print(type(min_price_item))
         if min_price_item:
             prices = Price.objects.filter(product_id=min_price_item)
-            ids = [min_price_item] + [f"{price.currency.symbol} {price.value}" for price in prices]
+            ids = [min_price_item] + [
+                f"{price.currency.symbol} {price.value}" for price in prices
+            ]
             return mark_safe("id " + "<br>".join(map(str, ids)))
         else:
             return None
+
     # @admin.display(description="Min price")
     # def get_min_price_item(self, obj):
     #     if obj.min_price_item:
@@ -99,10 +110,11 @@ class ProductAdmin(admin.ModelAdmin):
     #         return mark_safe("id " + "<br>".join(map(str, ids)))
     #     else:
     #         return None
-    
+
     @admin.display(description="In Stock")
     def get_qty_in_stock(self, obj):
         return obj.qty_in_stock
+
     # @admin.display(description="In Stock")
     # def get_qty_in_stock(self, obj):
     #     # Используем кэширование, чтобы избежать множественных запросов к базе данных
@@ -113,12 +125,12 @@ class ProductAdmin(admin.ModelAdmin):
     @admin.display(description="IMG")
     def get_img(self, obj):
         return mark_safe(f'<img src={ obj.image_set.first().image.url } width="80">')
+
     # get_img.short_description = mark_safe(f"<strong>IMG</strong>")
 
     @admin.display(description="Brand")
     def get_brand(self, obj):
         return obj.category.get(type="B")
-
 
     @admin.display(description="Collections")
     def get_collections(self, obj):
@@ -162,15 +174,15 @@ class ImageAdmin(admin.ModelAdmin):
     get_img.short_description = mark_safe(f"<strong>Image</strong>")
 
 
-
-
 class PriceInlineFormset(forms.models.BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         initial_currency_values = [1, 4]  # список значений для полей currency
         for i, form in enumerate(self.forms):
             # Устанавливаем значение поля currency для текущей формы
-            form.initial['currency'] = initial_currency_values[i % len(initial_currency_values)]
+            form.initial["currency"] = initial_currency_values[
+                i % len(initial_currency_values)
+            ]
 
 
 class PriceInline(admin.TabularInline):
@@ -186,34 +198,55 @@ class PriceInline(admin.TabularInline):
         else:
             formset.extra = 2  # Для добавления нового объекта
         return formset
-    
+
 
 @admin.register(ProductItem)
 class ProductItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "product","get_variation","get_prices",)
+    list_display = (
+        "id",
+        "product",
+        "get_variation",
+        "get_prices",
+    )
     ordering = ("id",)
     list_display_links = ("id", "product")
     inlines = [PriceInline]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("product").prefetch_related("variation", "price_set", "price_set__currency")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("product")
+            .prefetch_related("variation", "price_set", "price_set__currency")
+        )
 
     @admin.display(description="Prices")
     def get_prices(self, obj):
-        prices = [str(price) for price in obj.price_set.all()]  # получить все цены для данного объекта
+        prices = [
+            str(price) for price in obj.price_set.all()
+        ]  # получить все цены для данного объекта
         return " ".join(prices)
-    
+
     def get_variation(self, obj):
         return ", ".join([f"{var.id} | {var}" for var in obj.variation.all()])
+
     get_variation.short_description = "Size"
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         instance = form.instance
-        validate_variations(pk_set=instance.variation.all())
-        validate_prices(pk_set=instance.price_set.all())
-        # validate_prices(pk_set=Price.objects.filter(product=instance))
-        update_product_entry(instance=instance)
+        # save_sorted_m2m_objects(instance.price_set.all()),
+        my_signal.send(sender=None,
+                       instance=instance, 
+                       request=request, 
+                       variation_pk_set=instance.variation.all(),
+                       prices=instance.price_set.all(),
+                       )
+        # validate_variations(pk_set=instance.variation.all())
+        # validate_prices(pk_set=instance.price_set.all())
+        # # validate_prices(pk_set=Price.objects.filter(product=instance))
+
+        # update_product_entry(instance=instance)
 
 
 @admin.register(Price)

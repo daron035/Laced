@@ -8,7 +8,8 @@ from django.views.generic import ListView, DetailView, CreateView
 
 # from app.cart.models import Cart
 from app.product.models import Product, Category
-from .forms import AddProductForm
+
+# from .forms import AddProductForm
 
 
 from django.contrib.sessions.backends.db import SessionStore
@@ -113,24 +114,24 @@ class ProductView(ListView):
 
 
 # class AddProductView(LoginRequiredMixin, CreateView):
-class AddProductView(LoginRequiredMixin, FormView):
-    form_class = AddProductForm
-    template_name = "management/add_product.html"
-    # success_url = reverse_lazy('home') reverse в отличие от revers_lazy, сразу пытается построить маршрут
-    # в момент создания экземпляра класса
-    # если не указывать этот свойство, то автоматически перенапрправится по get_ lute_url
-    login_url = reverse_lazy("home")
-    # login_url = '/admin/' # перенаправление неавторизованных пользователей на страницу админки
-    raise_exception = True  # перенаправление на страницу 403
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # context["types"] = Category.objects.filter(type=Category.ProductType.TYPE)
-        # context["brands"] = Category.objects.filter(type=Category.ProductType.BRAND)
-        # context["series"] = Category.objects.filter(type=Category.ProductType.MODEL)
-        # c_def = self.get_user_context(title='Добавление статьи')
-        # context = dict(list(context.items()) + list(c_def.items()))
-        return context
+# class AddProductView(LoginRequiredMixin, FormView):
+#     form_class = AddProductForm
+#     template_name = "management/add_product.html"
+#     # success_url = reverse_lazy('home') reverse в отличие от revers_lazy, сразу пытается построить маршрут
+#     # в момент создания экземпляра класса
+#     # если не указывать этот свойство, то автоматически перенапрправится по get_ lute_url
+#     login_url = reverse_lazy("home")
+#     # login_url = '/admin/' # перенаправление неавторизованных пользователей на страницу админки
+#     raise_exception = True  # перенаправление на страницу 403
+#
+#     def get_context_data(self, *, object_list=None, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # context["types"] = Category.objects.filter(type=Category.ProductType.TYPE)
+#         # context["brands"] = Category.objects.filter(type=Category.ProductType.BRAND)
+#         # context["series"] = Category.objects.filter(type=Category.ProductType.MODEL)
+#         # c_def = self.get_user_context(title='Добавление статьи')
+#         # context = dict(list(context.items()) + list(c_def.items()))
+#         return context
 
 
 def search_product(request):
