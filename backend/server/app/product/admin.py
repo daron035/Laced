@@ -11,7 +11,6 @@ from .models import *
 from .signals import my_signal
 
 
-
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "parent_category", "type")
@@ -70,7 +69,7 @@ class ProductAdmin(admin.ModelAdmin):
     ]
 
     def get_queryset(self, request):
-    
+
         return (
             super()
             .get_queryset(request)
@@ -236,12 +235,12 @@ class ProductItemAdmin(admin.ModelAdmin):
         super().save_related(request, form, formsets, change)
         instance = form.instance
         # save_sorted_m2m_objects(instance.price_set.all()),
-        my_signal.send(sender=None,
-                       instance=instance, 
-                       request=request, 
-                       variation_pk_set=instance.variation.all(),
-                       prices=instance.price_set.all(),
-                       )
+        my_signal.send(
+            sender=None,
+            instance=instance,
+            variation_pk_set=instance.variation.all(),
+            prices=instance.price_set.all(),
+        )
         # validate_variations(pk_set=instance.variation.all())
         # validate_prices(pk_set=instance.price_set.all())
         # # validate_prices(pk_set=Price.objects.filter(product=instance))
@@ -253,6 +252,7 @@ class ProductItemAdmin(admin.ModelAdmin):
 class PriceAdmin(admin.ModelAdmin):
     list_display = ("id", "product", "currency", "value")
     list_display_links = ("id", "product")
+
 
 @admin.register(Carousel)
 class CarouselAdmin(admin.ModelAdmin):

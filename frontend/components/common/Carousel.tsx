@@ -8,8 +8,6 @@ import Link from "next/link";
 import ImageWithFallback from "../utils/ImageWithFallback";
 import { getCookie, setCookie, deleteCookie } from "@/utils";
 
-
-
 interface Product {
   id: number;
   brand: string;
@@ -35,10 +33,14 @@ interface Props {
 function ProductCard({ product }: { product: Product }) {
   const imageUrl = getImgURL(product.image, "300:300");
 
-  const a = getCookie("currency")
+  const a = getCookie("currency");
 
-  const priceValue = product.price_from.value
-  const formattedPrice = priceValue ? (Number.isInteger(parseFloat(priceValue)) ? product.price_from.symbol + parseFloat(priceValue).toFixed(0) : product.price_from.symbol + parseFloat(priceValue).toFixed(2)) : "";
+  const priceValue = product.price_from.value;
+  const formattedPrice = priceValue
+    ? Number.isInteger(parseFloat(priceValue))
+      ? product.price_from.symbol + parseFloat(priceValue).toFixed(0)
+      : product.price_from.symbol + parseFloat(priceValue).toFixed(2)
+    : "";
 
   return (
     <Link href={`/products/${product.slug}`}>
@@ -46,7 +48,7 @@ function ProductCard({ product }: { product: Product }) {
         <div className="w-56 h-56 mb-2 overflow-hidden">
           <div className="group-hover:scale-105 duration-500 select-none">
             <ImageWithFallback
-              src={imageUrl}
+              src={product.image}
               width={224}
               height={224}
               alt="Product"
@@ -56,9 +58,7 @@ function ProductCard({ product }: { product: Product }) {
         <footer className="flex flex-col gap-y-1 px-4 pb-4">
           <span>{product.name}</span>
           <span className="text-[#777777]">{product.brand}</span>
-          <span>
-            {formattedPrice}
-          </span>
+          <span>{formattedPrice}</span>
         </footer>
       </article>
     </Link>
@@ -66,7 +66,7 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function Carousel({ data: propData, title }: Props) {
-  console.log('propData',propData)
+  console.log("propData", propData);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemWidth = 284;
   const itemsPerScroll = 5;

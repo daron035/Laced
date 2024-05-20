@@ -7,7 +7,7 @@ from app.product.permissions import IsAdminOrReadOnly
 
 from .models import Product
 from .serializers import ProductSerializer, GeneralProductSerializer
-from .session_views import session_currency
+from .session_views import get_session_currency
 
 
 class SaleProductPagination(PageNumberPagination):
@@ -25,13 +25,23 @@ class ProductViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(data__min_price_item__isnull=False, is_active=True)
+        # return queryset.filter(data__min_price_item__isnull=False, is_active=True)
+        return queryset.filter(data__sizes__isnull=False)
         # return queryset.filter(min_price_item__isnull=False, is_active=True)
 
     def get_serializer_class(self):
         if self.action == "retrieve":
             return ProductSerializer
         return GeneralProductSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        currency = get_session_currency(self.request)
+        if currency is not None:
+            context["preferences.currency__id"] = currency["id"]
+            context["preferences.currency__symbol"] = currency["symbol"]
+            context["preferences.currency__iso"] = currency["iso"]
+        return context
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -47,10 +57,28 @@ class ProductViewSet(ModelViewSet):
         try:
             product = self.get_queryset().get(slug=self.kwargs.get("slug"))
         except Product.DoesNotExist:
-            # raise NotFound("Product not found.")
             return Response(status=status.HTTP_404_NOT_FOUND)
+
         serializer = self.get_serializer(product)
-        return Response(serializer.data)
+        data = serializer.data
+
+        # Добавляем дополнительную информацию
+        additional_info = {
+            "additional_info": "Some additional info",
+            # "currency": get_session_currency(request),
+            "currency_id": self.get_serializer_context().get(
+                "preferences.currency__id"
+            ),
+            "currency_symbol": self.get_serializer_context().get(
+                "preferences.currency__symbol"
+            ),
+            "currency_iso": self.get_serializer_context().get(
+                "preferences.currency__iso"
+            ),
+        }
+        data.update(additional_info)
+
+        return Response(data)
 
     @action(
         methods=["get"],
@@ -61,14 +89,9 @@ class ProductViewSet(ModelViewSet):
     )
     def related_products(self, request):
         queryset = self.get_queryset()[:3]
-        currency_id = session_currency(request)
-        context = {}
-        if currency_id is not None:
-            context["preferences.currency__id"] = currency_id
         serializer = self.get_serializer(
             queryset,
             many=True,
-            context=context,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 

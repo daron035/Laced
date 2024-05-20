@@ -1,7 +1,3 @@
-def session_currency(request):
-    return 1
-
-
 #
 # def create_session(request):
 #     return HttpRequest()
@@ -11,10 +7,20 @@ from django.conf import settings
 from django.contrib.sessions.backends.db import SessionStore
 from rest_framework import status
 from rest_framework.decorators import api_view
+from django.contrib.sessions.models import Session
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from app.user.models import UserAccount
 from app.purchases.models import Account, Country, Currency
+
+
+def get_session_currency(request):
+    session_currency = request.session.get("preferences", {})
+    currency_id = session_currency.get("currency_id", None)
+    currency_symbol = session_currency.get("currency_symbol", None)
+    currency_iso = session_currency.get("currency_iso", None)
+
+    return {"id": currency_id, "symbol": currency_symbol, "iso": currency_iso}
 
 
 def preferences(request):

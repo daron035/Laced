@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { getImgURL } from "@/utils/image.utils";
 
-export default function Images({ images }: { images: any }) {
+export default function Images({ images = [] }: { images: any[] }) {
   const [activeImage, setActiveImage] = useState(0);
   const [mainImage, setMainImage] = useState("");
 
@@ -36,12 +36,7 @@ export default function Images({ images }: { images: any }) {
       </div>
       {/* Main image */}
       <div className="mx-10">
-        <Image
-          src={mainImage}
-          width={580}
-          height={580}
-          alt="Main Picture"
-        />
+        <Image src={mainImage} width={580} height={580} alt="Main Picture" />
       </div>
     </div>
   );

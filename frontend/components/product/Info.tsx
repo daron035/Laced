@@ -14,7 +14,12 @@ export default function Info({ data, sizeData }: Props) {
   return (
     <div className="shrink-0 w-[420px] pt-[32px]">
       <Header brand={data.brand} sku={data.sku} name={data.name} />
-      <Actions data_matrix={sizeData} product_id={data.id} />
+      <Actions
+        data_matrix={sizeData}
+        product_id={data.id}
+        currency_iso={data.currency_iso}
+        currency_symbol={data.currency_symbol}
+      />
       <Accordion />
       <Details
         brand={data.brand}

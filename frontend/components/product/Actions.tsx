@@ -1,13 +1,12 @@
 "use client";
 
 import GeneralButton from "@/components/common/GeneralButton";
-import { addItemToCart } from "@/redux/features/cartSlice";
+// import { addItemToCart } from "@/redux/features/cartSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import React, { useState } from "react";
 
 import { getPrice, getMinPrice } from "@/utils/price.utils";
 import { getCookie } from "@/utils";
-
 
 interface StateType {
   countryCursor: number;
@@ -27,26 +26,30 @@ function NoDataAvailable() {
 
 export default function Actions({
   data_matrix,
+  product_id,
+  currency_iso,
+  currency_symbol,
 }: {
   data_matrix: any[];
   product_id: number;
+  currency_iso: string;
+  currency_symbol: string;
 }) {
   const dispatch = useAppDispatch();
 
   // Получаем списки стран и размеров из переданных данных
   // console.log(data_matrix);
-  const countries = data_matrix[0].slice(1, -1); // ["id"，"uk", "eu", ["gbp", "eur"]]
+  const countries = data_matrix[0].slice(1, -1); // ["id"，"UK", "EU", ["GBR", "EUR"]]
   const allSizes = data_matrix[1]; //               [[33, 3, 36, [22, 130, 160]],
   //                                                 [41, 4, 37, [23, 140, 180]]]
-  const minPriceID = getMinPrice(allSizes)
+  const minPriceID = getMinPrice(allSizes);
   const [state, setState] = useState<StateType>({
     sizeIndex: minPriceID || 0, //     i
     countryCursor: 0, // j
   });
   const selectedSize = allSizes[state.sizeIndex]; // [33, 3, 36, [130, 160]]
-  const currencies: string[] = data_matrix[0][data_matrix[0].length - 1]; // ["gbp", "eur"]
-  // const [currencyIcon, currencyID] = getPrice(getCookie('currency')!, currencies); // [0] => "usd"
-  const [currencyIcon, currencyID] = getPrice("usd", currencies); // [0] => "usd"
+  const currencies: string[] = data_matrix[0][data_matrix[0].length - 1]; // ["GBR", "EUR"]
+  const currencyID = currencies.indexOf(currency_iso);
 
   const handleCountryClick = (index: number) => {
     setState((prevState) => ({
@@ -63,7 +66,7 @@ export default function Actions({
   };
 
   const handleClickAddToBagButton = (id: string) => {
-    dispatch(addItemToCart(id));
+    // dispatch(addItemToCart(id));
     // window.location.href = "/cart";
   };
 
@@ -122,7 +125,7 @@ export default function Actions({
           </div>
         </div>
         <div className="text-[#101010] text-3xl mt-8 subpixel-antialiased">
-          {currencyIcon}
+          {currency_symbol}
           {selectedSize[selectedSize.length - 1][currencyID]}
         </div>
       </div>

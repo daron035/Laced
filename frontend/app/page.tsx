@@ -1,7 +1,7 @@
 import Carousel from "@/components/common/Carousel";
 import Sl from "@/components/common/Sl";
 import { getSession } from "@/session";
-import { Path, getData } from "@/utils/car";
+import { Path, getData } from "@/components/utils";
 
 import { cookies } from "next/headers";
 import { headers } from "next/headers";

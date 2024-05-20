@@ -80,6 +80,7 @@ class GeneralProductSerializer(serializers.ModelSerializer):
         image_instance = obj.image_set.first()
         if request and image_instance:
             return request.build_absolute_uri(image_instance.image.url)
+        print("⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️⭕️")
         return None
 
 
