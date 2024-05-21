@@ -7,6 +7,7 @@ from enum import Enum
 
 from app.product.serializers import ProductSerializer, CartProductSerializer
 from app.product.models import Price, Product, ProductItem
+from app.product.session_views import get_session_currency
 
 
 class Currency(Enum):
@@ -68,6 +69,21 @@ class Cart:
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
 
+    def get_serializer_context(self):
+        """
+        Добавление метода get_serializer_context для передачи контекста в сериализатор.
+        """
+        context = {
+            "request": self.request,
+            "view": self,
+        }
+        # currency = self.request.session.get("preferences", None)
+        currency = get_session_currency(self.request)
+        if currency:
+            context["preferences.currency__id"] = currency["id"]
+            context["preferences.currency__iso"] = currency["iso"]
+        return context
+
     def save(self):
         self.session.modified = True
 
@@ -78,30 +94,40 @@ class Cart:
         product_item_id = str(product_item_id)
 
         prod_item = ProductItem.objects.get(pk=product_item_id)
-        preferences = self.session.get("preferences")
-        if preferences:
-            # print("2323232323", currency)
-            price = Price.objects.get(
-                product=prod_item, currency=preferences["currency_iso"]
-            )
-        # # price_item = "{:.2f}".format(float(prod_item.RUB))
-        else:
-            price = Price.objects.get(product=prod_item, currency=4)
-        #
+
+        # b = Price.objects.filter(product_id=prod_item)
+        # a = {"price": b.values()}
+        # print("♥️")
+        # print(a)
+        # preferences = self.session.get("preferences")
+        # if preferences:
+        #     # print("2323232323", currency)
+        #     # print("♥️")
+        #     price = Price.objects.filter(
+        #         # product=prod_item, currency=preferences["currency_iso"]
+        #         product=prod_item
+        #     )
+        # # # price_item = "{:.2f}".format(float(prod_item.RUB))
+        # else:
+        #     price = Price.objects.get(product=prod_item, currency=4)
+        # #
         if product_item_id in self.cart:
             raise ValueError("Product already exists in the cart.")
         if product_item_id not in self.cart:
-            self.cart[product_item_id] = {
-                "quantity": 0,
-                #         # "price": prod_item.price.RUB,
-                "price": price.value,
-            }
+            self.cart[product_item_id] = 0
+            # self.cart[product_item_id] = {
+            #     "quantity": 0,
+            #     #         # "price": prod_item.price.RUB,
+            #     # "price": float(price.value),
+            # }
         #     # self.cart[product_id] = {"quantity": 0, "price": str(product["price"])}
         print(1)
         if overide_quantity:
-            self.cart[product_item_id]["quantity"] = quantity
+            # self.cart[product_item_id]["quantity"] = quantity
+            self.cart[product_item_id] = quantity
         else:
-            self.cart[product_item_id]["quantity"] += quantity
+            # self.cart[product_item_id]["quantity"] += quantity
+            self.cart[product_item_id] += quantity
         #
         self.save()
         print(self.cart)
@@ -129,7 +155,9 @@ class Cart:
         cart = self.cart.copy()
         for product in products:
             serializer = CartProductSerializer(
-                product, context={"request": self.request}
+                # product, context={"request": self.request}
+                product,
+                context=self.get_serializer_context(),
             )
             cart[str(product.id)]["product"] = serializer.data
         for item in cart.values():

@@ -23,7 +23,7 @@ export function getSessionID(): string | null {
   headers: { Cookie: `${existingCookies}; ${sessionID}` }
 
   if (!cookies().has("sessionid")) {
-    cookies.getAll()
+    cookies().getAll()
     headers: { Cookie: cookies().toString() + sessionid },
     headers().get("sessionid");
     return b;

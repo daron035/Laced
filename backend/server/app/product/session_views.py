@@ -5,6 +5,7 @@
 from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.sessions.backends.db import SessionStore
+from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.contrib.sessions.models import Session
@@ -24,7 +25,16 @@ def get_session_currency(request):
 
 
 def preferences(request):
-    return HttpResponse()
+    print("♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️")
+    print(request.session.get("preferences"))
+    print(request.COOKIES)
+    print("♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️")
+    session_currency = request.session.get("preferences", {})
+    country_name = session_currency.get("country_name", None)
+    currency_symbol = session_currency.get("currency_symbol", None)
+    currency_iso = session_currency.get("currency_iso", None)
+    currency = f"{currency_symbol} {currency_iso}"
+    return JsonResponse({"country": country_name, "currency": currency})
 
 
 from enum import Enum

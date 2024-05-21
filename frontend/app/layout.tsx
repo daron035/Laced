@@ -4,10 +4,9 @@ import { Inter } from "next/font/google";
 import Provider from "@/redux/provider";
 import { Navbar, Footer } from "@/components/common";
 import { Cookies, Setup } from "@/components/utils";
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 
 import { getSession, setSession } from "@/session";
-
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -53,10 +52,10 @@ export default async function RootLayout({
   // // console.log('||||||||||||||||||||||||||||||', cookies().getAll())
   // console.log('||||||||||||||||||||||||||||||', a.headers.getSetCookie())
 
-
   return (
     <html lang="en">
-      <body className={inter.className}>
+      {/* <body className={inter.className}> */}
+      <body className={`${inter.className} antialiased`}>
         <Provider>
           <Setup />
           {/* <Cookies view={!preferencesIsSet ? true : false} /> */}

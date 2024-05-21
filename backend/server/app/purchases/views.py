@@ -16,7 +16,7 @@ class CartAPI(APIView):
     """
 
     def get(self, request, format=None):
-        return Response(status=status.HTTP_200_OK)
+        # return Response(status=status.HTTP_200_OK)
         cart = Cart(request)
 
         print(1)
@@ -29,7 +29,7 @@ class CartAPI(APIView):
             {
                 "data": list(iter(cart)),
                 "count": len(cart),
-                "cart_total_price": cart.get_total_price(),
+                # "cart_total_price": cart.get_total_price(),
             },
             status=status.HTTP_200_OK,
             # status=status.HTTP_202_ACCEPTED,

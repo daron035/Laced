@@ -115,6 +115,7 @@ class CartProductSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="product.name")
     image = serializers.SerializerMethodField()
     # prices = serializers.SerializerMethodField()
+    price_from = serializers.SerializerMethodField()
     variation = serializers.SerializerMethodField()
 
     class Meta:
@@ -124,9 +125,26 @@ class CartProductSerializer(serializers.ModelSerializer):
             "name",
             "image",
             "variation",
-            "RUB",
-            # "prices",
+            # "RUB",
+            "prices",
+            "price_from",
         )
+
+    def get_price_from(self, obj):
+        # currency = self.context.get("preferences.currency__id")
+        context = self.context
+        currency = context["preferences.currency__id"]
+        if currency:
+            # prices = Price.objects.filter(
+            #     product=obj.data["min_price_item"], currency__id=currency
+            # ).first()
+            prices = Price.objects.get(
+                product=obj.product.data["min_price_item"], currency__id=currency
+            )
+            return PriceSerializer(prices).data
+        else:
+            prices = Price.objects.filter(product=obj.product.data["min_price_item"])
+        return PriceSerializer(prices, many=True).data
 
     def get_image(self, obj):
         request = self.context.get("request")
