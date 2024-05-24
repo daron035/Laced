@@ -7,21 +7,21 @@ export enum Path {
   trending_products = "product/trending_products/",
 }
 
-export async function getData(type: Path) {
-  let url = "";
-  switch (type) {
-    case Path.related_products:
-      url = Path.related_products;
-      return await getRequest(url);
-    case Path.trending_products:
-      url = Path.trending_products;
-      return await getRequest(url);
-    default:
-      throw new Error(`Unhandled type: ${type}`);
-  }
-}
+// export async function getCaraouselData(type: Path) {
+//   let url = "";
+//   switch (type) {
+//     case Path.related_products:
+//       url = Path.related_products;
+//       return await getData(url);
+//     case Path.trending_products:
+//       url = Path.trending_products;
+//       return await getData(url);
+//     default:
+//       throw new Error(`Unhandled type: ${type}`);
+//   }
+// }
 
-export async function getRequest(url: string) {
+export async function getData(url: string) {
   const existingCookies = cookies().toString();
 
   // Получаем значения заголовков 'lang' и 'country'

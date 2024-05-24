@@ -29,6 +29,7 @@ pydantic = "^2.5.3"
 pandas = "^2.2.0"
 mypy = "^1.10.0"
 ipinfo-django = "^2.0.0"
+yookassa = "^3.1.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"

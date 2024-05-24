@@ -1,7 +1,7 @@
 import Images from "@/components/product/Images";
 import Info from "@/components/product/Info";
 import Carousel from "@/components/common/Carousel";
-import { Path, getData, getD } from "@/components/utils";
+import { getData } from "@/components/utils";
 
 interface SizeData {
   id: number;
@@ -48,27 +48,9 @@ const jsData = {
     eu: "asdfasfas",
   },
 };
-// async function getData() {
-//   // const res = await fetch("http://localhost:8000/api/product/", {
-//   const res = await fetch("http://127.0.0.1:8000/api/product/", {
-//     cache: "no-store",
-//   });
-//   // The return value is *not* serialized
-//   // You can return Date, Map, Set, etc.
-//
-//   if (!res.ok) {
-//     // This will activate the closest `error.js` Error Boundary
-//     throw new Error("Failed to fetch data");
-//   }
-//
-//   return res.json();
-// }
-// export default function Page() {
-// export default async function Page() {
+
 export default async function Page({ params }: { params: { slug: string } }) {
-  // const data = await getData();
-  const data = await getD(`product/${params.slug}/`);
-  console.log(data);
+  const data = await getData(`product/${params.slug}/`);
 
   return (
     <div className="w-[1184px] px-5 max-w-full mx-auto">
