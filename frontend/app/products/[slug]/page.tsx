@@ -1,7 +1,7 @@
 import Images from "@/components/product/Images";
 import Info from "@/components/product/Info";
 import Carousel from "@/components/common/Carousel";
-import { getData } from "@/components/utils";
+import { Path, getData } from "@/components/utils";
 
 interface SizeData {
   id: number;
@@ -51,6 +51,7 @@ const jsData = {
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const data = await getData(`product/${params.slug}/`);
+  const carouselData = await getData(Path.related_products);
 
   return (
     <div className="w-[1184px] px-5 max-w-full mx-auto">
@@ -60,15 +61,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
         {/* инфа справа */}
         <Info data={data} sizeData={data.sizes} />
       </div>
-      {/* <Carousel data={data} title="most popular" /> */}
-
-      {/*
-      <div className="">
-        {jsData.sizes.map((size: SizeData, index: number) => (
-          <div key={index}>{size.UK}</div>
-        ))}
-      </div>
-      */}
+      {carouselData && (
+        <Carousel data={carouselData} title="related products" />
+      )}
     </div>
   );
 }
