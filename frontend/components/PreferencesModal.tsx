@@ -5,14 +5,12 @@ import { useState, useRef, useEffect } from "react";
 
 interface Props {
   callbackClose: () => void;
-  country_iso: string;
-  currency_iso: string;
+  preferences: any;
 }
 
 export default function PreferencesModal({
   callbackClose,
-  country_iso,
-  currency_iso,
+  preferences,
 }: Props) {
   const [selectedPref, setSelectedPref] = useState<{
     country: string;
@@ -32,8 +30,11 @@ export default function PreferencesModal({
   useOutsideClick(callbackClose, ref);
 
   useEffect(() => {
-    setSelectedPref({ country: country_iso, currency: currency_iso });
-  }, [country_iso, currency_iso]);
+    setSelectedPref({
+      country: preferences.country_iso,
+      currency: preferences.currency_iso,
+    });
+  }, [preferences]);
 
   function handleChangePref(event: React.ChangeEvent<HTMLSelectElement>) {
     setSelectedPref({

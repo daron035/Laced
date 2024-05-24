@@ -28,6 +28,7 @@ def preferences(request):
     print("♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️")
     print(request.session.get("preferences"))
     print(request.COOKIES)
+    # print(request.headers)
     print("♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️")
     session_currency = request.session.get("preferences", {})
     country_name = session_currency.get("country_name", None)
@@ -95,12 +96,15 @@ def create_session(request):
             currency_symbol = currency.symbol
         else:
             country_iso = request.COOKIES.get("country")
+            print(country_iso)
             currency_iso = getattr(CurrencyEnum, country_iso).value
             country = Country.objects.get(iso=country_iso)
+            print("1", country)
             currency = Currency.objects.get(iso=currency_iso)
             country_name = str(country)
             currency_id = currency.pk
             currency_symbol = currency.symbol
+            print("32320923")
 
         session_key = set_session_data(
             country_iso, currency_iso, country_name, currency_id, currency_symbol

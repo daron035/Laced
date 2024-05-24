@@ -7,12 +7,15 @@ export function getCookie(name: string): string | undefined {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-export function getResponseCookie(name: string, response: any): string | undefined {
+export function getResponseCookie(
+  name: string,
+  response: any,
+): string | undefined {
   const cookieHeader = response.headers.get("Set-Cookie");
   if (!cookieHeader) {
     return undefined; // Если заголовок Set-Cookie отсутствует, возвращаем undefined
   }
-  
+
   const matches = cookieHeader.match(
     new RegExp(
       "(?:^|; )" + name.replace(/([.$?*|{}()[\]\\/+^])/g, "\\$1") + "=([^;]*)",
@@ -21,12 +24,11 @@ export function getResponseCookie(name: string, response: any): string | undefin
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-
-// export function getAllCookies(): { [key: string]: string } | undefined {
-export function getAllCookies(): { [key: string]: string } {
-  // if (!document.cookie) {
-  //   return undefined; // Возвращаем undefined, если нет cookies
-  // }
+export function getAllCookies(): { [key: string]: string } | undefined {
+  // export function getAllCookies(): { [key: string]: string } {
+  if (!document.cookie) {
+    return undefined; // Возвращаем undefined, если нет cookies
+  }
 
   const cookies: { [key: string]: string } = {};
 

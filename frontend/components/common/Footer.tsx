@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import PreferencesModal from "@/components/PreferencesModal";
-
-// import {  useRetrievePreferencesQuery } from "@/redux/features/carouselApiSlice";
 import { useGetPreferencesQuery } from "@/redux/features/carouselApiSlice";
 
 interface PreferencesProps {
@@ -16,10 +13,6 @@ interface PreferencesProps {
 
 export default function Footer() {
   const { data, error, isLoading, isSuccess } = useGetPreferencesQuery();
-
-  console.log(data);
-  // useRetrievePreferencesQuery();
-  // useGetPreferencesQuery()
 
   const [preferences, setPreferences] = useState<PreferencesProps>({
     country: null,
@@ -50,18 +43,13 @@ export default function Footer() {
     setModal(false);
     document.body.style.overflow = "";
   }
-  // const callbackCloseModal = () => {
-  //   setModal(false);
-  // };
 
   return (
     <nav>
       {viewModal && (
         <PreferencesModal
-          // pref={preferences}
+          preferences={preferences}
           callbackClose={callbackCloseModal}
-          country_iso={preferences.country_iso}
-          currency_iso={preferences.currency_iso}
         />
       )}
       <h1 className="bg-gray-950 h-16 select-none outline-none">
