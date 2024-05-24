@@ -1,9 +1,11 @@
 from django.urls import path
 
-from .views import CartAPI
+from .views import CartAPI, CreatePaymentView, my_webhook_handler
 
 urlpatterns = [
     path("cart/", CartAPI.as_view(), name="cart"),
+    path("payment/", CreatePaymentView.as_view(), name="payment"),
+    path("verify/", my_webhook_handler, name="hook"),
     # path("cart_size/", CartAPI.as_view()),
     # path("cart/length/", CartAPI.as_view(), name="cart-length"),
 ]

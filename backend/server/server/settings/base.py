@@ -19,6 +19,10 @@ DEBUG = getenv("DEBUG", True)
 # ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 ALLOWED_HOSTS = ["*"]
 
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://da7e-178-129-103-40.ngrok-free.app",
+# ]
+CSRF_TRUSTED_ORIGINS = ["https://67c8-178-129-103-40.ngrok-free.app"]
 
 # Application definition
 
@@ -292,7 +296,8 @@ SITE_NAME = "Laced"
 # DEBUG = False
 # PREPEND_WWW = True
 # USE_X_FORWARDED_HOST = True
-# CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 # SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = False

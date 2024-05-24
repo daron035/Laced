@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import Provider from "@/redux/provider";
 import { Navbar, Footer } from "@/components/common";
 import { Cookies, Setup } from "@/components/utils";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,6 +33,7 @@ export default async function RootLayout({
           </div>
         </Provider>
       </body>
+      <Script src="https://static.yoomoney.ru/checkout-js/v1/checkout.js" />
     </html>
   );
 }

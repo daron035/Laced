@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import GeneralButton from "@/components/common/GeneralButton";
 // import { addItemToCart } from "@/redux/features/cartSlice";
 import { useAppDispatch } from "@/redux/hooks";
@@ -7,6 +8,12 @@ import React, { useState } from "react";
 
 import { getPrice, getMinPrice } from "@/utils/price.utils";
 import { getCookie } from "@/utils";
+
+declare global {
+  interface Window {
+    YooMoneyCheckout: any;
+  }
+}
 
 interface StateType {
   countryCursor: number;
@@ -65,9 +72,76 @@ export default function Actions({
     }));
   };
 
-  const handleClickAddToBagButton = (id: string) => {
+  const handlePayment = async () => {
+    // const checkout = new window.YooMoneyCheckout(983923);
+    const checkout = new window.YooMoneyCheckout(391979);
+    let response: any;
+    await checkout
+      .tokenize({
+        number: "4111111111111111",
+        cvc: "234",
+        month: "11",
+        year: "25",
+      })
+      .then((res: any) => {
+        if (res.status === "success") {
+          // if (res.status === "200") {
+
+          // const { paymentToken } = res.data.response;
+          // response = paymentToken;
+          response = res.data.response.paymentToken;
+          console.log(response);
+
+          // setPaymentToken(res.data.response);
+        } else {
+          response = res;
+          console.log("YooKassa FAILED");
+        }
+      })
+      .catch((error: any) => {
+        console.error("Ошибка при токенизации:", error);
+      });
+    return response;
+    console.log("390239239023923");
     // dispatch(addItemToCart(id));
     // window.location.href = "/cart";
+  };
+
+  const router = useRouter();
+  const handleClickAddToBagButton = async () => {
+    // router.push("http://127.0.0.1:3000/products");
+    try {
+      const token = await handlePayment();
+      const amount = 301;
+      console.log("final", token);
+
+      // Отправка токена на бэкенд Django
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/payment/`,
+        {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token, amount }),
+        },
+      );
+      let result = await response.json();
+      console.log("32323233223", result);
+      console.log("HTTP статус ответа:", response.status);
+      router.push(".");
+      if (response.status === 202) {
+        // Токен успешно отправлен на бэкенд Django
+        console.log("Токен успешно отправлен на бэкенд Django!");
+        // Можете выполнять дополнительные действия здесь при необходимости
+      } else {
+        // Ошибка при отправке токена на бэкенд
+        console.error("Не удалось отправить токен на бэкенд Django.");
+      }
+    } catch (err) {
+      console.error("Ошибка при обработке оплаты:", err);
+    }
   };
 
   if (!data_matrix || data_matrix.length === 0) {
@@ -134,7 +208,7 @@ export default function Actions({
           lg
           action="black"
           title="add to bag"
-          onClick={() => handleClickAddToBagButton("1")}
+          onClick={() => handleClickAddToBagButton()}
         />
         <GeneralButton lg action="white" title="sell this item" />
       </div>
