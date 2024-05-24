@@ -7,6 +7,13 @@ import PreferencesModal from "@/components/PreferencesModal";
 // import {  useRetrievePreferencesQuery } from "@/redux/features/carouselApiSlice";
 import { useGetPreferencesQuery } from "@/redux/features/carouselApiSlice";
 
+interface PreferencesProps {
+  country: string | null;
+  currency: string | null;
+  country_iso: string | null;
+  currency_iso: string | null;
+}
+
 export default function Footer() {
   const { data, error, isLoading, isSuccess } = useGetPreferencesQuery();
 
@@ -14,21 +21,25 @@ export default function Footer() {
   // useRetrievePreferencesQuery();
   // useGetPreferencesQuery()
 
-  const [preferences, setPreferences] = useState({
+  const [preferences, setPreferences] = useState<PreferencesProps>({
     country: null,
     currency: null,
+    country_iso: null,
+    currency_iso: null,
   });
-  // useEffect(() => {
-  //   if (isSuccess && data) {
-  //     setPreferences({
-  //       ...preferences,
-  //       country: data.country_name,
-  //       currency: data.currency_iso,
-  //     });
-  //   }
-  // }, [isSuccess, data]);
 
-  const [viewModal, setModal] = useState(false);
+  useEffect(() => {
+    if (isSuccess && data) {
+      setPreferences({
+        country: data.country,
+        currency: data.currency,
+        country_iso: data.country_iso,
+        currency_iso: data.currency_iso,
+      });
+    }
+  }, [isSuccess, data]);
+
+  const [viewModal, setModal] = useState<boolean>(false);
 
   function openModal() {
     setModal(true);
@@ -39,14 +50,20 @@ export default function Footer() {
     setModal(false);
     document.body.style.overflow = "";
   }
+  // const callbackCloseModal = () => {
+  //   setModal(false);
+  // };
 
   return (
     <nav>
-      <PreferencesModal
-        display={viewModal}
-        // pref={preferences}
-        callbackClose={callbackCloseModal}
-      />
+      {viewModal && (
+        <PreferencesModal
+          // pref={preferences}
+          callbackClose={callbackCloseModal}
+          country_iso={preferences.country_iso}
+          currency_iso={preferences.currency_iso}
+        />
+      )}
       <h1 className="bg-gray-950 h-16 select-none outline-none">
         <div className="h-full px-2">
           <div className="flex items-center justify-center h-full">

@@ -31,10 +31,18 @@ def preferences(request):
     print("♥️♥️♥️♥️♥️♥️♥️♥️♥️♥️")
     session_currency = request.session.get("preferences", {})
     country_name = session_currency.get("country_name", None)
+    country_iso = session_currency.get("country_iso", None)
     currency_symbol = session_currency.get("currency_symbol", None)
     currency_iso = session_currency.get("currency_iso", None)
     currency = f"{currency_symbol} {currency_iso}"
-    return JsonResponse({"country": country_name, "currency": currency})
+    return JsonResponse(
+        {
+            "country": country_name,
+            "currency": currency,
+            "country_iso": country_iso,
+            "currency_iso": currency_iso,
+        }
+    )
 
 
 from enum import Enum

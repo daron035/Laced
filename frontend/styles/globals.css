@@ -24,3 +24,7 @@ a.nostyle:visited {
   color: inherit;
   cursor: auto;
 }
+
+*:focus {
+  outline: none;
+}

@@ -1,20 +1,56 @@
-"use client";
-
 import { HiOutlineChevronDown } from "react-icons/hi";
 import { GeneralButton } from "@/components/common";
+import { useEscapeKey, useOutsideClick } from "@/hooks";
+import { useState, useRef, useEffect } from "react";
 
 interface Props {
-  display: boolean;
-  callbackClose: any;
+  callbackClose: () => void;
+  country_iso: string;
+  currency_iso: string;
 }
 
-export default function PreferencesModal({ display, callbackClose }: Props) {
+export default function PreferencesModal({
+  callbackClose,
+  country_iso,
+  currency_iso,
+}: Props) {
+  const [selectedPref, setSelectedPref] = useState<{
+    country: string;
+    currency: string;
+  }>({
+    country: "",
+    currency: "",
+  });
+
+  // const sendYes = () => callbackClose();
+  // const sendNo = () => callbackClose();
+
+  useEscapeKey(callbackClose);
+
+  const ref = useRef(null);
+  // useOutsideClick(sendNo, ref);
+  useOutsideClick(callbackClose, ref);
+
+  useEffect(() => {
+    setSelectedPref({ country: country_iso, currency: currency_iso });
+  }, [country_iso, currency_iso]);
+
+  function handleChangePref(event: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedPref({
+      ...selectedPref,
+      [event.target.name]: event.target.value,
+    });
+  }
+
   return (
     <div
-      className={`${display ? "" : "hidden"} fixed left-0 top-0 z-10 w-full h-full bg-black bg-opacity-50
+      className={`fixed left-0 top-0 z-10 w-full h-full bg-black bg-opacity-50
                   flex items-center justify-center`}
     >
-      <div className="flex flex-col max-w-md divide-y bg-white text-black">
+      <div
+        className="flex flex-col max-w-md divide-y bg-white text-black"
+        ref={ref}
+      >
         <header className="p-6 text-center">
           <h2 className="text-xl mb-1">Change your settings</h2>
           <p className="text-sm font-light">
@@ -27,8 +63,11 @@ export default function PreferencesModal({ display, callbackClose }: Props) {
           </label>
           <div className="relative flex items-center border border-gray-200 hover:border-gray-400 transition duration-200 ease-in-out">
             <select
-              name="region"
+              name="country"
               id="region-select"
+              value={selectedPref.country}
+              // onChange={handleChangePref}
+              onChange={(e) => handleChangePref(e)}
               className="relative w-full h-10 outline-none appearance-none pl-4 pr-8"
             >
               <option value="US">United States</option>
@@ -194,6 +233,7 @@ export default function PreferencesModal({ display, callbackClose }: Props) {
               <option value="RE">Reunion</option>
               <option value="RO">Romania</option>
               <option value="RW">Rwanda</option>
+              <option value="RU">Russian Federation</option>
               <option value="WS">Samoa</option>
               <option value="SM">San Marino</option>
               <option value="ST">Sao Tome/Principe</option>
@@ -258,6 +298,7 @@ export default function PreferencesModal({ display, callbackClose }: Props) {
               <option value="en">English</option>
               <option value="it">Italiano</option>
               <option value="de">Deutsch</option>
+              <option value="ru">Russian</option>
               <option value="fr">Français</option>
               <option value="ja">日本語</option>
               <option value="zh">简体中文</option>
@@ -277,6 +318,8 @@ export default function PreferencesModal({ display, callbackClose }: Props) {
             <select
               name="currency"
               id="currency-select"
+              value={selectedPref.currency}
+              onChange={(e) => handleChangePref(e)}
               className="relative w-full h-10 outline-none appearance-none pl-4 pr-8"
             >
               <option value="AUD">$ AUD</option>
@@ -284,6 +327,7 @@ export default function PreferencesModal({ display, callbackClose }: Props) {
               <option value="CHF">CHF</option>
               <option value="EUR">€ EUR</option>
               <option value="GBP">£ GBP</option>
+              <option value="RUB">₽ RUB</option>
               <option value="HKD">$ HKD</option>
               <option value="JPY">¥ JPY</option>
               <option value="KRW">₩ KRW</option>
@@ -300,13 +344,15 @@ export default function PreferencesModal({ display, callbackClose }: Props) {
             sm
             action="white"
             title="Cancel"
-            onClick={() => callbackClose()}
+            // onClick={() => callbackClose()}
+            onClick={callbackClose}
           />
           <GeneralButton
             sm
             action="black"
             title="Save Changes"
-            onClick={() => callbackClose()}
+            // onClick={() => callbackClose()}
+            onClick={callbackClose}
           />
         </footer>
       </div>

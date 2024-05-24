@@ -1,5 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+interface PreferencesProps {
+  country: string;
+  currency: string;
+  country_iso: string;
+  currency_iso: string;
+}
+
 export const GeneralAPI = createApi({
   reducerPath: "GeneralAPI",
   baseQuery: fetchBaseQuery({
@@ -8,7 +15,7 @@ export const GeneralAPI = createApi({
   }),
   tagTypes: ["Preferences"],
   endpoints: (build) => ({
-    getPreferences: build.query<{ country: string; currency: string }, void>({
+    getPreferences: build.query<PreferencesProps, void>({
       query: () => ({
         url: `/preferences/`,
       }),
