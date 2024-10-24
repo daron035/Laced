@@ -23,6 +23,7 @@ export default async function RootLayout({
       {/* <body className={inter.className}> */}
       <body className={`${inter.className} antialiased`}>
         <Provider>
+          {/* <Layout> */}
           <Setup />
           {/* <Cookies view={!preferencesIsSet ? true : false} /> */}
           <Cookies />
@@ -31,9 +32,10 @@ export default async function RootLayout({
             <div className="flex-grow">{children}</div>
             <Footer />
           </div>
+          {/* </Layout> */}
         </Provider>
       </body>
-      <Script src="https://static.yoomoney.ru/checkout-js/v1/checkout.js" />
+      {/* <Script src="https://static.yoomoney.ru/checkout-js/v1/checkout.js" /> */}
     </html>
   );
 }

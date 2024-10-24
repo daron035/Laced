@@ -1,5 +1,6 @@
-from djoser.serializers import UserSerializer
 from django.contrib.auth import get_user_model
+
+from djoser.serializers import UserSerializer
 
 
 User = get_user_model()
@@ -20,7 +21,7 @@ class CustomUserSerializer(UserSerializer):
         representation = super().to_representation(instance)
 
         print(
-            " wqeiurioqwueriowqueriouqwioeruioquweiroqwioerWERIUIQOETIUWERITOUWIERUTIWEJKJJ"
+            " wqeiurioqwueriowqueriouqwioeruioquweiroqwioerWERIUIQOETIUWERITOUWIERUTIWEJKJJ",
         )
         # request = self.context.get("request")
         # sessionid = request.COOKIES.get("sessionid", None)

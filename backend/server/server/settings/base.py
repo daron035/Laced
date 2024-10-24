@@ -1,8 +1,8 @@
-from datetime import timedelta
-from os import getenv, path
 import os
+from datetime import timedelta
+from os import getenv
 from pathlib import Path
-from django.core.management.utils import get_random_secret_key
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -11,7 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+# SECRET_KEY = getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+SECRET_KEY = "django-insecure-zr70fqg+y)rzahs0w%%5!m$#5k+vehq7t$g)8d!tpa-)o)kgoe"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv("DEBUG", True)
@@ -22,8 +23,17 @@ ALLOWED_HOSTS = ["*"]
 # CSRF_TRUSTED_ORIGINS = [
 #     "https://da7e-178-129-103-40.ngrok-free.app",
 # ]
-CSRF_TRUSTED_ORIGINS = ["https://67c8-178-129-103-40.ngrok-free.app"]
+# CSRF_TRUSTED_ORIGINS = ["https://67c8-178-129-103-40.ngrok-free.app"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:8083",
+    "http://127.0.0.1:8083",
+    # "*"
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -56,7 +66,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     # "django.middleware.locale.LocaleMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "ipinfo_django.middleware.IPinfoMiddleware",
+    # "ipinfo_django.middleware.IPinfoMiddleware",
     # "app.product.middleware.SimpleMiddleware",
     # "app.user.middleware.AnonymousUserTrackingMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -76,7 +86,7 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
         "LOCATION": os.path.join(BASE_DIR, "cache"),
-    }
+    },
 }
 
 ROOT_URLCONF = "server.urls"
@@ -107,7 +117,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
 }
 
 
@@ -154,7 +164,7 @@ STATIC_URL = "django_static/"
 # STATIC_ROOT = BASE_DIR / "static"
 STATIC_ROOT = BASE_DIR / "django_static"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "build/static/"),
+    # os.path.join(BASE_DIR, "build/static/"),
     os.path.join(BASE_DIR, "static"),
 ]
 
@@ -178,7 +188,8 @@ AUTH_COOKIE_REFRESH_MAX_AGE = 60 * 60 * 24
 AUTH_COOKIE_SECURE = False
 AUTH_COOKIE_HTTP_ONLY = True
 AUTH_COOKIE_PATH = "/"
-AUTH_COOKIE_SAMESITE = "None"
+AUTH_COOKIE_SAMESITE = False  # firefox && chrome
+# AUTH_COOKIE_SAMESITE = "None" # right but only chrome
 
 AUTHENTICATION_BACKENDS = [
     "social_core.backends.google.GoogleOAuth2",
@@ -226,7 +237,7 @@ DJOSER = {
     "USERNAME_CHANGED_EMAIL_CONFIRMATION": True,
     "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
     "USER_CREATE_PASSWORD_RETYPE": True,
-    "SEND_CONFIRMATION_EMAIL": True,
+    "SEND_CONFIRMATION_EMAIL": False,
     "SET_USERNAME_RETYPE": True,
     "SET_PASSWORD_RETYPE": True,
     "PASSWORD_RESET_CONFIRM_URL": "/password-reset/{uid}/{token}",
@@ -249,17 +260,17 @@ DJOSER = {
 
 # Social OAuth2
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = getenv("GOOGLE_AUTH_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = getenv("GOOGLE_AUTH_SECRET_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile",
-    "openid",
-]
-SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ["first_name", "last_name"]
-
-SOCIAL_AUTH_VK_OAUTH2_KEY = "8120512"
-SOCIAL_AUTH_VK_OAUTH2_SECRET = "ZL0mWfSytO4VWQUU7CJJ"
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = getenv("GOOGLE_AUTH_KEY")
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = getenv("GOOGLE_AUTH_SECRET_KEY")
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+#     "https://www.googleapis.com/auth/userinfo.email",
+#     "https://www.googleapis.com/auth/userinfo.profile",
+#     "openid",
+# ]
+# SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ["first_name", "last_name"]
+#
+# SOCIAL_AUTH_VK_OAUTH2_KEY = "8120512"
+# SOCIAL_AUTH_VK_OAUTH2_SECRET = "ZL0mWfSytO4VWQUU7CJJ"
 
 # SOCIAL_AUTH_FACEBOOK_KEY = getenv("FACEBOOK_AUTH_KEY")
 # SOCIAL_AUTH_FACEBOOK_SECRET = getenv("FACEBOOK_AUTH_SECRET_KEY")
@@ -270,7 +281,6 @@ SOCIAL_AUTH_VK_OAUTH2_SECRET = "ZL0mWfSytO4VWQUU7CJJ"
 # CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-SESSION_SAVE_EVERY_REQUEST = True
 # CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
 # CORS_ALLOW_HEADERS = [
 #     "Content-Type",  # Add this line to allow Content-Type header
@@ -279,13 +289,13 @@ SESSION_SAVE_EVERY_REQUEST = True
 
 # Email settings
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 465
-EMAIL_HOST_USER = getenv("SMTP_GMAIL")
-EMAIL_HOST_PASSWORD = "txsrqoqatufdlrjz"
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_PORT = 465
+# EMAIL_HOST_USER = getenv("SMTP_GMAIL")
+# EMAIL_HOST_PASSWORD = "txsrqoqatufdlrjz"
+# EMAIL_USE_TLS = False
+# EMAIL_USE_SSL = True
 
 # Djoser Email Template Text
 
@@ -293,15 +303,15 @@ DOMAIN = getenv("DOMAIN")
 SITE_NAME = "Laced"
 
 
-# DEBUG = False
-# PREPEND_WWW = True
-# USE_X_FORWARDED_HOST = True
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
-# SESSION_COOKIE_SECURE = True
+# # DEBUG = False
+# # PREPEND_WWW = True
+# # USE_X_FORWARDED_HOST = True
+# CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_HTTPONLY = True
+# # SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = False
-# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# # SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Your Project API",

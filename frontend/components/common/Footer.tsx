@@ -62,7 +62,7 @@ export default function Footer() {
               >
                 <span>{data.country}</span>
                 <span className="px-1 text-sm font-bold">|</span>
-                <span>лангуаге</span>
+                <span>English</span>
                 <span className="px-1 text-sm font-bold">|</span>
                 <span>{data.currency}</span>
               </button>

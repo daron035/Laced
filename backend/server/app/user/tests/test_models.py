@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+
 import pytest
-import json
 
 
 pytestmark = pytest.mark.django_db

@@ -2,15 +2,13 @@ from decimal import Decimal
 
 from django.conf import settings
 
-from app.product.serializers import ProductSerializer
 from app.product.models import Product
+from app.product.serializers import ProductSerializer
 
 
 class Cart:
     def __init__(self, request):
-        """
-        initialize the cart
-        """
+        """Initialize the cart."""
         self.request = request
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID, None)
@@ -23,9 +21,7 @@ class Cart:
         self.session.modified = True
 
     def add(self, id, quantity=1, overide_quantity=False):
-        """
-        Add product to the cart or update its quantity
-        """
+        """Add product to the cart or update its quantity."""
 
         # {'2': {'quantity': 5, 'price': '1800.00'}, '3': {'quantity': 5, 'price': '1800.00'}}
         # print(self.cart)
@@ -46,9 +42,7 @@ class Cart:
         self.save()
 
     def remove(self, product):
-        """
-        Remove a product from the cart
-        """
+        """Remove a product from the cart."""
         product_id = str(product["id"])
 
         if product_id in self.cart:
@@ -56,9 +50,7 @@ class Cart:
             self.save()
 
     def __iter__(self):
-        """
-        Loop through cart items and fetch the products from the database
-        """
+        """Loop through cart items and fetch the products from the database."""
         # {'2': {'quantity': 5, 'price': '1800.00'}, '3': {'quantity': 5, 'price': '1800.00'}}
         # print(self.cart)
 
@@ -84,9 +76,7 @@ class Cart:
             yield item
 
     def __len__(self):
-        """
-        Count all items in the cart
-        """
+        """Count all items in the cart."""
         return sum(item["quantity"] for item in self.cart.values())
 
     def get_total_price(self):

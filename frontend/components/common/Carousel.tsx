@@ -5,7 +5,7 @@ import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import styles from "../../styles/carousel.module.scss";
 import { getImgURL } from "@/utils/image.utils";
 import Link from "next/link";
-import ImageWithFallback from "../utils/ImageWithFallback";
+import ImageWithFallback from "@/components/utils/ImageWithFallback";
 import { getCookie, setCookie, deleteCookie } from "@/utils";
 
 interface Product {
@@ -36,6 +36,7 @@ function ProductCard({ product }: { product: Product }) {
   const a = getCookie("currency");
 
   const priceValue = product.price_from.value;
+  console.log("qqq", product);
   const formattedPrice = priceValue
     ? Number.isInteger(parseFloat(priceValue))
       ? product.price_from.symbol + parseFloat(priceValue).toFixed(0)
@@ -69,35 +70,48 @@ export default function Carousel({ data: propData, title }: Props) {
   console.log("propData", propData);
   const containerRef = useRef<HTMLDivElement>(null);
   const itemWidth = 284;
-  const itemsPerScroll = 5;
-
-  const handleScroll = (scrollLeft: number) => {
-    const scrollAmount = itemWidth * itemsPerScroll;
-    return scrollLeft === 0
-      ? containerRef.current!.scrollWidth
-      : scrollLeft - scrollAmount;
-  };
+  const itemsPerScroll = 4;
 
   const handleNextClick = () => {
     if (containerRef.current) {
       const container = containerRef.current;
-      container.scrollTo({
-        left: handleScroll(container.scrollLeft + container.clientWidth),
-        behavior: "smooth",
-      });
+      const scrollAmount = itemWidth * itemsPerScroll;
+
+      if (
+        container.scrollLeft + container.clientWidth ===
+        container.scrollWidth
+      ) {
+        container.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      } else {
+        container.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
+      }
     }
   };
 
   const handlePrevClick = () => {
     if (containerRef.current) {
       const container = containerRef.current;
-      container.scrollTo({
-        left: handleScroll(container.scrollLeft),
-        behavior: "smooth",
-      });
+      const scrollAmount = itemWidth * itemsPerScroll;
+
+      if (container.scrollLeft === 0) {
+        container.scrollTo({
+          left: container.scrollWidth,
+          behavior: "smooth",
+        });
+      } else {
+        container.scrollBy({
+          left: -scrollAmount,
+          behavior: "smooth",
+        });
+      }
     }
   };
-
   return (
     <div className="text-[#101010] pt-16">
       <div className="flex justify-between items-center mb-4">

@@ -1,21 +1,21 @@
-from django.contrib.auth.signals import (
-    user_logged_in,
-    user_login_failed,
-    user_logged_out,
-)
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
 
 # User = get_user_model()
-from django.dispatch import Signal
- 
+from django.dispatch import (
+    receiver,
+    Signal,
+)
+
+
 # my_signal = Signal(providing_args=["arg1", "arg2"])
 my_signal = Signal()
 
 # from path.to.signals import my_signal
 from rest_framework_simplejwt.tokens import AccessToken
+
 from .models import UserAccount
+
+
 @receiver(my_signal)
 def my_signal_handler(sender, cookies, access_token, request, response, arg2, **kwargs):
     sessionid = cookies.get("sessionid")

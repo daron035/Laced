@@ -1,0 +1,25 @@
+/* .carousel { */
+/*   display: flex; */
+/*   /* height: 400px; */
+/*   height: 100%; */
+/*   width: 100%; */
+/*   max-width: 800px; */
+/* } */
+
+.slider-image {
+  transition: opacity 0.5s ease;
+}
+
+.slide-next {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.slide-prev {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.active-slide .slider-image {
+  opacity: 1;
+}

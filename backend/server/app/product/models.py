@@ -1,13 +1,12 @@
-from django.db import models
-from django.db.models import Min
-from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
-from django.core.exceptions import ValidationError
-from django.template.defaultfilters import slugify
 from django.contrib.postgres.indexes import GistIndex
 from django.core.validators import MinValueValidator
+from django.db import models
+from django.template.defaultfilters import slugify
 
-from app.purchases.models import Account, Country, Currency
+from app.purchases.models import (
+    Account,
+    Currency,
+)
 
 
 class AccountProduct(models.Model):
@@ -29,12 +28,19 @@ class Category(models.Model):
         MODEL = "S", "Series"
 
     parent_category = models.ForeignKey(
-        "self", on_delete=models.SET_NULL, null=True, blank=True
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     type = models.CharField(
-        choices=ProductType.choices, max_length=1, null=True, blank=True, default="B"
+        choices=ProductType.choices,
+        max_length=1,
+        null=True,
+        blank=True,
+        default="B",
     )
 
     class Meta:
@@ -70,7 +76,8 @@ class Product(models.Model):
     def qty_in_stock(self):
         if self.productitem_set:
             return self.productitem_set.filter(
-                product_id=self.pk, ordered_date=None
+                product_id=self.pk,
+                ordered_date=None,
             ).count()
 
     # @property
@@ -116,7 +123,9 @@ class ProductItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, null=False)
     sku = models.CharField(max_length=40, blank=True)
     variation = models.ManyToManyField(
-        "VariationOption", related_name="product_item", blank=False
+        "VariationOption",
+        related_name="product_item",
+        blank=False,
     )
     date_added = models.DateTimeField(auto_now_add=True)
     ordered_date = models.DateTimeField(null=True, blank=True)
@@ -134,13 +143,12 @@ class ProductItem(models.Model):
                 # Rollback the transaction
                 self.delete()
                 raise ValueError(
-                    "Two VariationOptions with the same variation_id are not allowed."
+                    "Two VariationOptions with the same variation_id are not allowed.",
                 )
             variation_ids.add(variation_option.variation_id)
 
 
 ###############################################
-
 
 
 # 🚨 product
@@ -155,9 +163,9 @@ class Price(models.Model):
 
     def __str__(self):
         return f"{self.currency.symbol} {self.value}"
-    
+
     class Meta:
-        ordering = ['currency']
+        ordering = ["currency"]
 
 
 # from django.db.models.signals import post_save
@@ -187,7 +195,7 @@ class VariationOption(models.Model):
     def __str__(self):
         if self.value is None:
             dict_as_string = " | ".join(
-                [f"{key} {value}" for key, value in self.data.items()]
+                [f"{key} {value}" for key, value in self.data.items()],
             )
             return dict_as_string
         return str(self.value)

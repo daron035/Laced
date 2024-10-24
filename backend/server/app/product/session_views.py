@@ -2,17 +2,26 @@
 # def create_session(request):
 #     return HttpRequest()
 #
-from django.http import HttpResponse
 from django.conf import settings
 from django.contrib.sessions.backends.db import SessionStore
-from django.http import JsonResponse
+from django.http import (
+    HttpResponse,
+    JsonResponse,
+)
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.contrib.sessions.models import Session
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
+from rest_framework_simplejwt.tokens import (
+    RefreshToken,
+    TokenError,
+)
+
+from app.purchases.models import (
+    Country,
+    Currency,
+)
 from app.user.models import UserAccount
-from app.purchases.models import Account, Country, Currency
 
 
 def get_session_currency(request):
@@ -42,7 +51,7 @@ def preferences(request):
             "currency": currency,
             "country_iso": country_iso,
             "currency_iso": currency_iso,
-        }
+        },
     )
 
 
@@ -60,7 +69,11 @@ def create_session(request):
     refresh_token = request.COOKIES.get("refresh")
 
     def set_session_data(
-        country_iso, currency_iso, country_name, currency_id, currency_symbol
+        country_iso,
+        currency_iso,
+        country_name,
+        currency_id,
+        currency_symbol,
     ):
         session = SessionStore()
         session["preferences"] = {
@@ -107,7 +120,11 @@ def create_session(request):
             print("32320923")
 
         session_key = set_session_data(
-            country_iso, currency_iso, country_name, currency_id, currency_symbol
+            country_iso,
+            currency_iso,
+            country_name,
+            currency_id,
+            currency_symbol,
         )
 
         response = HttpResponse(status=status.HTTP_200_OK)

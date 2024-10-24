@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-from .models import Account, Country, Currency
+from .models import (
+    Account,
+    Country,
+    Currency,
+)
 
 
 @admin.register(Account)

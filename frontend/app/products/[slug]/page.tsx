@@ -59,7 +59,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         {/* предпоказ слева */}
         <Images images={data.images} />
         {/* инфа справа */}
-        <Info data={data} sizeData={data.sizes} />
+        {data && <Info data={data} sizeData={data.sizes} />}
       </div>
       {carouselData && (
         <Carousel data={carouselData} title="related products" />

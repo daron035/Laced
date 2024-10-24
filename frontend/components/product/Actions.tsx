@@ -8,6 +8,7 @@ import React, { useState } from "react";
 
 import { getPrice, getMinPrice } from "@/utils/price.utils";
 import { getCookie } from "@/utils";
+import { addToCart } from "@/redux/features/cartSlice";
 
 declare global {
   interface Window {
@@ -45,10 +46,10 @@ export default function Actions({
   const dispatch = useAppDispatch();
 
   // Получаем списки стран и размеров из переданных данных
-  // console.log(data_matrix);
+  console.log(data_matrix);
   const countries = data_matrix[0].slice(1, -1); // ["id"，"UK", "EU", ["GBR", "EUR"]]
-  const allSizes = data_matrix[1]; //               [[33, 3, 36, [22, 130, 160]],
-  //                                                 [41, 4, 37, [23, 140, 180]]]
+  const allSizes = data_matrix[1]; //               [[33, 3, 36, [130, 160]],
+  //                                                 [41, 4, 37, [140, 180]]]
   const minPriceID = getMinPrice(allSizes);
   const [state, setState] = useState<StateType>({
     sizeIndex: minPriceID || 0, //     i
@@ -108,7 +109,7 @@ export default function Actions({
   };
 
   const router = useRouter();
-  const handleClickAddToBagButton = async () => {
+  const handleClickAddToBagButton_payment = async () => {
     // router.push("http://127.0.0.1:3000/products");
     try {
       const token = await handlePayment();
@@ -147,6 +148,24 @@ export default function Actions({
   if (!data_matrix || data_matrix.length === 0) {
     return <NoDataAvailable />;
   }
+
+  const handleClickAddToBagButton = () => {
+    // console.log(product_id);
+    // console.log(data_matrix[1][state.sizeIndex][0]);
+    dispatch(
+      addToCart({
+        product_id: product_id,
+        variation_id: data_matrix[1][state.sizeIndex][0],
+      }),
+    );
+    // dispatch(addToCart({ product_id: 1, variation_id: 186 }));
+    // dispatch(addToCart({ product_id: 1, variation_id: 186 })).then((action) => {
+    //   // Проверяем код ответа
+    //   if (action.payload.status === 208) {
+    //     // Ваша логика для кода ответа 208
+    //   }
+    // });
+  };
 
   return (
     <>
@@ -208,7 +227,7 @@ export default function Actions({
           lg
           action="black"
           title="add to bag"
-          onClick={() => handleClickAddToBagButton()}
+          onClick={handleClickAddToBagButton}
         />
         <GeneralButton lg action="white" title="sell this item" />
       </div>

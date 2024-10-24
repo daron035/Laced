@@ -1,11 +1,15 @@
-from django.urls import include, path, re_path
+from django.urls import (
+    include,
+    path,
+    re_path,
+)
 
 from .views import (
+    CustomProviderAuthView,
     CustomTokenObtainPairView,
     CustomTokenRefreshView,
     CustomTokenVerifyView,
     LogoutView,
-    CustomProviderAuthView,
 )
 
 

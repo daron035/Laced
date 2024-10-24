@@ -8,7 +8,7 @@ class UserConfig(AppConfig):
     # https://docs.djangoproject.com/en/5.0/topics/signals/#connecting-receiver-functions
     def ready(self):
         # Implicitly connect signal handlers decorated with @receiver.
-        from . import signals
+        pass
         # import app.user.signals
 
         # Explicitly connect a signal handler.

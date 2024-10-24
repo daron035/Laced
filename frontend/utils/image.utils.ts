@@ -33,7 +33,9 @@ export function getImgURL(url: string | null, a: any): string {
   const path = `/rs:fit:${a}/${base64Encoded}`;
   // const path = `/rs:fit:300:300/${base64Encoded}`;
   const signature = sign(SALT, path, KEY);
-  const imgUrl = `http://localhost:8083/imgproxy/${signature}${path}`;
+  // const imgUrl = `http://localhost:8080/imgproxy/${signature}${path}`;
+  // console.log("🚨", imgUrl);
+  const imgUrl = `http://imgproxy:8080/imgproxy/${signature}${path}`;
   // const imgUrl = `http://176.109.104.181:8083/imgproxy/${signature}${path}`;
   return imgUrl;
 }

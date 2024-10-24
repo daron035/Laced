@@ -1,0 +1,35 @@
+
+{% extends 'management/index.html' %}
+{% block content %}
+
+<div>
+  <div>header</div>
+  <form method="get" class="p-[20px] max-w-96 relative"> <!-- Добавляем relative для контейнера -->
+    <div class="grid grid-cols-3 divide-x border rounded">
+      <div class="relative"> <!-- Добавляем relative для каждой колонки -->
+        {% csrf_token %}
+        <input type="text" name="uk" placeholder="UK" value="{{ request.GET.uk }}" class="p-2 w-full outline-none"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results-uk'
+          hx-trigger="keyup changed delay:500ms" />
+        <div id="results-uk" class="absolute bg-white border rounded w-full z-10"></div> <!-- Контейнер для результатов -->
+      </div>
+      <div class="relative"> <!-- Добавляем relative для каждой колонки -->
+        <input type="text" name="eu" placeholder="EU" value="{{ request.GET.eu }}" class="p-2 w-full outline-none"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results-eu'
+          hx-trigger="keyup changed delay:500ms" />
+        <div id="results-eu" class="absolute bg-white border rounded w-full z-10"></div> <!-- Контейнер для результатов -->
+      </div>
+      <div class="relative"> <!-- Добавляем relative для каждой колонки -->
+        <input type="text" name="us" placeholder="US" value="{{ request.GET.us }}" class="p-2 w-full outline-none"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results-us'
+          hx-trigger="keyup changed delay:500ms" />
+        <div id="results-us" class="absolute bg-white border rounded w-full z-10"></div> <!-- Контейнер для результатов -->
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

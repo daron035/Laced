@@ -1,5 +1,3 @@
-from django.utils.translation import get_language_from_request
-from django.conf import settings
 
 
 class SimpleMiddleware:

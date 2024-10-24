@@ -1,22 +1,22 @@
-"""
-WSGI config for server project.
+"""WSGI config for server project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
+
 """
 
 import os
-from os import getenv, path
+from os import getenv
 from pathlib import Path
-import dotenv
 
 # print("3030303030303030\n", getenv("D"))
 from django.core.wsgi import get_wsgi_application
 
+
 #
-# BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 #
 # dotenv_file = BASE_DIR / ".env.dev"
 #

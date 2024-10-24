@@ -1,21 +1,35 @@
 from pprint import pprint
 
 from django.core.exceptions import ValidationError
-from django.dispatch import receiver
-from django.dispatch import Signal
-from django.db.models import Count, Q
-from django.db.models import Sum, Min
-from django.db.models.signals import pre_delete, m2m_changed
+from django.db.models import (
+    Count,
+    Min,
+    Q,
+    Sum,
+)
+from django.db.models.signals import (
+    m2m_changed,
+    pre_delete,
+)
+from django.dispatch import (
+    receiver,
+    Signal,
+)
 
+from app.product.models import (
+    Price,
+    Product,
+    ProductItem,
+    VariationOption,
+)
 
-from app.product.models import Product, ProductItem, VariationOption, Price
 
 my_signal = Signal()
 
 
 def validate_variations(variation_pk_set):
     new_variations = VariationOption.objects.filter(
-        pk__in=variation_pk_set
+        pk__in=variation_pk_set,
     ).values_list("variation_id", flat=True)
     if len(set(new_variations)) != len(new_variations):
         raise ValidationError("Duplicate variation detected in Options.")
@@ -90,12 +104,26 @@ def get_min_price_product_item_id(instance_id, variations, deleted=False):
         return None
 
 
+def a(x):
+    try:
+        # if len(x) == 1:
+        #     return str(float(x[1]))
+        return str(float(x[1]))
+    except:
+        if x[1][-1].isalpha() and x[1][-1] == "c":
+            print("♦️", str(float(x[1][:-1]) - 100))
+            return str(float(x[1][:-1]) - 100)
+        elif x[1][-1].isalpha() and x[1][-1] == "k":
+            print("🤷‍♀️", str(float(x[1][:-1]) + 100))
+            return str(float(x[1][:-1]) + 100)
+
+
 def update_product_entry(instance, deleted=False):
     instance_variation_option_id = instance.variation.get(variation=1).pk
 
     matrix = instance.product.data.get("sizes")
     product_item_id = get_min_price_product_item_id(
-        instance.pk, instance_variation_option_id, deleted
+        instance.pk, instance_variation_option_id, deleted,
     )
     if not product_item_id:
         return
@@ -120,7 +148,9 @@ def update_product_entry(instance, deleted=False):
             body.append([variation_option.pk, *list(variation_option.data.values())])
             decimal_price_list = list(prices.values_list("value", flat=True))
             body[-1].append(list(map(float, decimal_price_list)))
-            body = sorted(body, key=lambda x: x[0])
+            # body = sorted(body, key=lambda x: x[0])
+        # body = sorted(body, key=lambda x: (x[1], x[2]))
+        body = sorted(body, key=a)
         matrix = [head, body]
         instance.product.data["sizes"] = matrix
         instance.product.data["min_price_item"] = product_item_id
@@ -173,4 +203,3 @@ def delete_entry(sender, instance, **kwargs):
 def check_option_variation(sender, instance, action, **kwargs):
     if action == "pre_remove":
         delete_product_entry(instance)
-

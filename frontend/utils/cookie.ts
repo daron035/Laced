@@ -25,21 +25,22 @@ export function getResponseCookie(
 }
 
 export function getAllCookies(): { [key: string]: string } | undefined {
-  // export function getAllCookies(): { [key: string]: string } {
-  if (!document.cookie) {
-    return undefined; // Возвращаем undefined, если нет cookies
-  }
-
-  const cookies: { [key: string]: string } = {};
-
-  document.cookie.split(";").forEach((cookie) => {
-    const parts = cookie.split("=");
-    const name = parts[0].trim();
-    const value = decodeURIComponent(parts[1]);
-    cookies[name] = value;
-  });
-
-  return cookies;
+  // // export function getAllCookies(): { [key: string]: string } {
+  // if (!document.cookie) {
+  //   return undefined; // Возвращаем undefined, если нет cookies
+  // }
+  //
+  // const cookies: { [key: string]: string } = {};
+  //
+  // document.cookie.split(";").forEach((cookie) => {
+  //   const parts = cookie.split("=");
+  //   const name = parts[0].trim();
+  //   const value = decodeURIComponent(parts[1]);
+  //   cookies[name] = value;
+  // });
+  //
+  // return cookies;
+  return undefined;
 }
 
 export function setCookie(

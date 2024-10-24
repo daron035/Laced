@@ -1,14 +1,9 @@
-from django.contrib.sessions.models import Session
-
 """https://docs.djangoproject.com/en/dev/topics/http/sessions/#using-sessions-out-of-views"""
 
 
 class AnonymousUserTrackingMiddleware:
-    """
-    Adds a session key for anonymous users
-    This should be placed after the
-    SessionMiddleware but before AuthenticationMiddleware
-    """
+    """Adds a session key for anonymous users This should be placed after the
+    SessionMiddleware but before AuthenticationMiddleware."""
 
     def __init__(self, get_response):
         self.get_response = get_response

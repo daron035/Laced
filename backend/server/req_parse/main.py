@@ -1,19 +1,8 @@
-import json
-import multiprocessing
-import argparse
-import re
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-
 
 from proxy import Proxy
 
-from scrapper import Selenium, worker
+from scrapper import Selenium
 
 
 BASE_DIR = Path(__file__).resolve().parent

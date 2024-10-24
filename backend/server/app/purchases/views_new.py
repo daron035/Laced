@@ -1,17 +1,15 @@
-from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from app.product.serializers import ProductSerializer
-from app.product.models import Product
-
-from .service import Cart, RecentViewed
+from .service import (
+    Cart,
+    RecentViewed,
+)
 
 
 class CartAPI(APIView):
-    """
-    Single API to handle cart operations
-    """
+    """Single API to handle cart operations."""
 
     def get(self, request, format=None):
         cart = Cart(request)

@@ -10,7 +10,7 @@ interface PreferencesProps {
 export const GeneralAPI = createApi({
   reducerPath: "GeneralAPI",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.NEXT_PUBLIC_HOST}/api`,
+    baseUrl: `${process.env.NEXT_PUBLIC_RTKQ}/api`,
     credentials: "include",
   }),
   tagTypes: ["Preferences"],

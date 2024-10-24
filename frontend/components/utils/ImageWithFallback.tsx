@@ -8,10 +8,25 @@ interface Props {
   width: number;
   height: number;
   alt: string;
+  className: string | undefined;
 }
 
-export default function ImageWithFallback({ src, width, height, alt }: Props) {
+export default function ImageWithFallback({
+  src,
+  width,
+  height,
+  alt,
+  className,
+}: Props) {
   const imageUrl = getImgURL(src, "300:300");
 
-  return <Image src={imageUrl} width={width} height={height} alt={alt} />;
+  return (
+    <Image
+      src={imageUrl}
+      width={width}
+      height={height}
+      alt={alt}
+      className={className}
+    />
+  );
 }

@@ -1,0 +1,46 @@
+
+{% extends 'management/index.html' %}
+{% block content %}
+
+<div>
+  <div>header</div>
+  <form method="get" class="p-[20px] max-w-96 relative"> <!-- Убрали id, он не нужен -->
+    {% csrf_token %}
+    <div class="grid grid-cols-3 divide-x border rounded">
+      <div>
+        <input type="text" name="uk" placeholder="UK" value="{{ request.GET.uk }}" class="p-2 w-full outline-none"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results'
+          hx-trigger="keyup changed delay:500ms, from:body"
+          hx-include="[name='uk'], [name='eu'], [name='us']" />
+      </div>
+      <div>
+        <input type="text" name="eu" placeholder="EU" value="{{ request.GET.eu }}" class="p-2 w-full outline-none"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results'
+          hx-trigger="keyup changed delay:500ms, from:body"
+          hx-include="[name='uk'], [name='eu'], [name='us']" />
+      </div>
+      <div>
+        <input type="text" name="us" placeholder="US" value="{{ request.GET.us }}" class="p-2 w-full outline-none"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results'
+          hx-trigger="keyup changed delay:500ms, from:body"
+          hx-include="[name='uk'], [name='eu'], [name='us']" />
+      </div>
+    </div>
+    <div id="results" class="bg-white rounded w-full z-10"></div> <!-- Контейнер для результатов -->
+  </form>
+</div>
+
+<script>
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.matches('li[data-uk][data-eu][data-us]')) {
+      document.getElementById('uk-input').value = e.target.getAttribute('data-uk');
+      document.getElementById('eu-input').value = e.target.getAttribute('data-eu');
+      document.getElementById('us-input').value = e.target.getAttribute('data-us');
+    }
+  });
+</script>
+
+{% endblock %}

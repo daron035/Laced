@@ -1,10 +1,15 @@
 from django.urls import path
-from rest_framework import routers
+from rest_framework.routers import (
+    DefaultRouter,
+    DynamicRoute,
+    Route,
+)
 
+from .session_views import (
+    create_session,
+    preferences,
+)
 from .views import ProductViewSet
-from rest_framework.routers import Route, DynamicRoute, DefaultRouter, SimpleRouter
-
-from .session_views import create_session, preferences
 
 
 class MyCastomRouter(DefaultRouter):

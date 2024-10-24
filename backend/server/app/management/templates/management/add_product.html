@@ -1,0 +1,72 @@
+{% extends 'management/index.html' %}
+{% block content %}
+
+<div>
+  <div>header</div>
+  <form method="get" class="p-[20px] max-w-sm rounded-lg"> <!-- Добавляем relative для контейнера -->
+
+    <input type="text" name="name" id="name-input" placeholder="name" value="{{ request.GET.name }}" class="p-2 w-full outline-none border rounded mb-2" />
+    <input type="text" name="sku" id="sku-input" placeholder="sku" value="{{ request.GET.sku }}" class="p-2 w-full outline-none border rounded mb-2" />
+    <div class="grid grid-cols-2 gap-2">
+      <input type="text" name="year_released" id="year_released-input" placeholder="year released" value="{{ request.GET.year_released }}" class="p-2 w-full outline-none border rounded mb-2" />
+      <input type="text" name="colour" id="colour-input" placeholder="colour" value="{{ request.GET.colour }}" class="p-2 w-full outline-none border rounded mb-2" />
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
+      <textarea name="description_ru" id="description_ru-input" placeholder="description-en" class="p-2 w-full outline-none rounded mb-2"></textarea>
+      <textarea name="description_en" id="description_en-input" placeholder="description-en" value="{{ request.GET.description_en }}" class="p-2 w-full outline-none rounded mb-2"></textarea>
+    </div>
+
+    <div class="grid grid-cols-3 gap-x-[1px] bg-gray-300 relative">
+        {% csrf_token %}
+        <input type="text" name="uk" id="uk-input" placeholder="UK" value="{{ request.GET.uk }}" class="p-2 w-full outline-none "
+          hx-get="{% url 'search' %}" 
+          hx-target='#results'
+          hx-trigger="keyup changed delay:500ms"
+          hx-include="[name='uk'], [name='eu'], [name='us']"
+          onfocus="showResults()" />
+        <input type="text" name="eu" id="eu-input" placeholder="EU" value="{{ request.GET.eu }}" class="p-2 w-full outline-none"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results'
+          hx-trigger="keyup changed delay:500ms"
+          hx-include="[name='uk'], [name='eu'], [name='us']"
+          onfocus="showResults()" />
+        <input type="text" name="us" id="us-input" placeholder="US" value="{{ request.GET.us }}" class="p-2 w-full outline-none rounded-r"
+          hx-get="{% url 'search' %}" 
+          hx-target='#results'
+          hx-trigger="keyup changed delay:500ms"
+          hx-include="[name='uk'], [name='eu'], [name='us']"
+          onfocus="showResults()" />
+      <div id="results" class="absolute top-10 bg-white rounded w-full z-10"></div> <!-- Контейнер для результатов -->
+    </div>
+    <div></div>
+
+  </form>
+</div>
+
+<script>
+  // Функция для показа результатов
+  function showResults() {
+    document.getElementById('results').style.display = 'block';
+  }
+
+  // Обработчик клика на документе
+  document.addEventListener('click', function(e) {
+    // Проверяем, что клик был не на одном из инпутов и не на элементе результатов
+    if (!e.target.closest('input') && !e.target.closest('#results')) {
+      document.getElementById('results').style.display = 'none';
+    }
+  });
+
+  // Обработчик клика на элементах списка результатов
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.matches('li[data-uk][data-eu][data-us]')) {
+      document.getElementById('uk-input').value = e.target.getAttribute('data-uk');
+      document.getElementById('eu-input').value = e.target.getAttribute('data-eu');
+      document.getElementById('us-input').value = e.target.getAttribute('data-us');
+      document.getElementById('results').style.display = 'none'; // Скрыть результаты после выбора
+    }
+  });
+</script>
+
+{% endblock %}

@@ -117,8 +117,10 @@ data_list = [
 
 
 from pprint import pprint
+
 import pandas as pd
 from pandas import json_normalize
+
 
 # Column names
 columns = ["id", "uk", "eu", "price"]

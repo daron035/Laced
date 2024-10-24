@@ -1,8 +1,6 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
 from django.utils.safestring import mark_safe
-from django.db.models import Min, F, Count, Q, Prefetch, Sum
-
 
 from .models import *
 
@@ -63,7 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
                     "is_active",
                     "slug",
                     "data",
-                ]
+                ],
             },
         ),
     ]
@@ -123,7 +121,10 @@ class ProductAdmin(admin.ModelAdmin):
 
     @admin.display(description="IMG")
     def get_img(self, obj):
-        return mark_safe(f'<img src={ obj.image_set.first().image.url } width="80">')
+        if obj.image_set.first():
+            return mark_safe(
+                f'<img src={ obj.image_set.first().image.url } width="80">'
+            )
 
     # get_img.short_description = mark_safe(f"<strong>IMG</strong>")
 

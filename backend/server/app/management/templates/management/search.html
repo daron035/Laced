@@ -1,0 +1,16 @@
+{% if sizes %}
+<ul class="list-none p-2">
+  {% for size in sizes %}
+  <li
+    class="p-2 border-b hover:bg-gray-100"
+    data-uk="{{ size.data.UK }}"
+    data-eu="{{ size.data.EU }}"
+    data-us="{{ size.data.US }}"
+  >
+    UK: {{ size.data.UK }}, EU: {{ size.data.EU }}, US: {{ size.data.US }}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="p-2">No search results</p>
+{% endif %}

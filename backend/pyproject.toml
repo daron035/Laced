@@ -30,6 +30,7 @@ pandas = "^2.2.0"
 mypy = "^1.10.0"
 ipinfo-django = "^2.0.0"
 yookassa = "^3.1.0"
+django-debug-toolbar = "^4.4.2"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"
@@ -68,8 +69,9 @@ skip_glob=[
     ".vscode",
     "venv",
     ".venv",
+    "__pycache__",
 ]
-known_django=["django", "rest_framework"]
+known_django=["django", "ninja", "rest_framework"]
 known_first_party=["app"]
 sections=[
     "FUTURE",

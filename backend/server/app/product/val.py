@@ -1,6 +1,7 @@
 import pandas as pd
 from pandas import json_normalize
 
+
 # Updated Column names
 columns = ["id", "uk", "eu", ["gbp", "eur"]]
 
@@ -17,7 +18,7 @@ df = pd.DataFrame(data_list, columns=columns)
 for col in columns:
     if isinstance(col, list):
         df = pd.concat(
-            [df, json_normalize(df[col].apply(lambda x: dict(zip(col, x))))], axis=1
+            [df, json_normalize(df[col].apply(lambda x: dict(zip(col, x))))], axis=1,
         )
         df = df.drop(columns=[col])
 

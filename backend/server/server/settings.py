@@ -1,9 +1,15 @@
-from datetime import timedelta
-from os import getenv, path
 import os
+from datetime import timedelta
+from os import (
+    getenv,
+    path,
+)
 from pathlib import Path
+
 from django.core.management.utils import get_random_secret_key
+
 import dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -90,7 +96,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
 }
 
 

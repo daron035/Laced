@@ -1,18 +1,19 @@
-from django.views.generic.edit import FormView
+from django.contrib.sessions.models import Session
 from django.shortcuts import render
 from django.urls.base import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.contrib.sessions.models import Session
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import (
+    CreateView,
+    ListView,
+)
 
 # from app.cart.models import Cart
-from app.product.models import Product, Category
+from app.product.models import (
+    Category,
+    Product,
+    VariationOption,
+)
 
-# from .forms import AddProductForm
-
-
-from django.contrib.sessions.backends.db import SessionStore
+from .forms import AddProductForm
 
 
 def index(request):
@@ -50,7 +51,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 def asde(request):
-    response_string = "sadf"
+    pass
     # a = "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxNTc2MjM0NiwiaWF0IjoxNzE1MTU3NTQ2LCJqdGkiOiJmNGM5MGZjNWFlMzE0MDc4OTI0MDJhNjdjYTk0YzhmOCIsInVzZXJfaWQiOjF9.8rQGziWh1_gEa79FEotnWe5ZmtuXb3MA-BpNzrJB6Xw"
     a = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcxNTc2MjM0NiwiaWF0IjoxNzE1MTU3NTQ2LCJqdGkiOiJmNGM5MGZjNWFlMzE0MDc4OTI0MDJhNjdjYTk0YzhmOCIsInVzZXJfaWQiOjF9.8rQGziWh1_gEa79FEotnWe5ZmtuXb3MA-BpNzrJB6Xw"
     token = RefreshToken(a)
@@ -59,9 +60,10 @@ def asde(request):
     return HttpResponse(user_id)
 
 
-from django.http import HttpResponse
-import ipinfo
 from django.conf import settings
+from django.http import HttpResponse
+
+import ipinfo
 
 
 def get_ip_details(ip_address=None):
@@ -75,7 +77,7 @@ def get_ip_details(ip_address=None):
 def location(request):
     ip_data = get_ip_details("168.156.54.5")
     response_string = "The IP address {} is located at the coordinates {}, which is in the city {}.".format(
-        ip_data.ip, ip_data.loc, ip_data.city
+        ip_data.ip, ip_data.loc, ip_data.city,
     )
     return HttpResponse(response_string)
 
@@ -87,30 +89,44 @@ class ProductView(ListView):
     paginate_by = 20
     # extra_context = {'title': 'Главная страница'} # просто контекст статичный, мусорный
 
-    def get(self, request, *args, **kwargs):
-        # forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-        forwarded_for = request.META.get("REMOTE_ADDR")
-        # print("forwarded_for", forwarded_for)
-        a = location(request)
-        print("ipinfo", a)
-        # print("ipinfo", request.ipinfo.country)
 
-        # work
-        # print("ipinfo", my_view(request))
-        return super().get(request, *args, **kwargs)
+class AddProductView(CreateView):
+    form_class = AddProductForm
+    template_name = "management/add_product.html"
+    # success_url = reverse_lazy('home') reverse в отличие от revers_lazy, сразу пытается построить маршрут
+    # в момент создания экземпляра класса
+    # если не указывать этот свойство, то автоматически перенапрправится по get_ lute_url
+    login_url = reverse_lazy("home")
+    # login_url = '/admin/' # перенаправление неавторизованных пользователей на страницу админки
+    raise_exception = True  # перенаправление на страницу 403
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        a = self.request.session.session_key
-        # a = self.request.session.items()
-        print(a)
-        context = super().get_context_data(**kwargs)
-        # c_def = self.get_user_context(title="Главная страница")
-        # context и c_def формируют общий нужный context
-        # context = dict(list(context.items()) + list(c_def.items()))
-        return context
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     c_def = self.get_user_context(title='Добавление статьи')
+    #     context = dict(list(context.items()) + list(c_def.items()))
+    #     return context
 
-    def get_queryset(self):  # фильтруем посты из модели Women
-        return Product.objects.all()
+    # def get(self, request, *args, **kwargs):
+    #     # forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    #     forwarded_for = request.META.get("REMOTE_ADDR")
+    #     # print("forwarded_for", forwarded_for)
+    #     # a = location(request)
+    #     # print("ipinfo", a)
+    #     # print("ipinfo", request.ipinfo.country)
+
+    #     # work
+    #     # print("ipinfo", my_view(request))
+    #     return super().get(request, *args, **kwargs)
+
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     a = self.request.session.session_key
+    #     # a = self.request.session.items()
+    #     print(a)
+    #     context = super().get_context_data(**kwargs)
+    #     # c_def = self.get_user_context(title="Главная страница")
+    #     # context и c_def формируют общий нужный context
+    #     # context = dict(list(context.items()) + list(c_def.items()))
+    #     return context
 
 
 # class AddProductView(LoginRequiredMixin, CreateView):
@@ -157,3 +173,26 @@ def load_series(request):
     cat_id = request.GET.get("brand")
     brands = Category.objects.filter(parent_category_id=cat_id)
     return render(request, "management/brand_options.html", {"brands": brands})
+
+
+def search(request):
+    uk_size = request.GET.get("uk")
+    eu_size = request.GET.get("eu")
+    us_size = request.GET.get("us")
+    a = request.GET.getlist("uk")
+    print("a", a)
+
+    print("UK", uk_size)
+    print("EU", eu_size)
+    print("US", us_size)
+    sizes = VariationOption.objects.filter(variation_id=1)
+
+    if uk_size:
+        sizes = sizes.filter(data__UK=uk_size)
+    if eu_size:
+        sizes = sizes.filter(data__EU=eu_size)
+    if us_size:
+        sizes = sizes.filter(data__US=us_size)
+
+    # print("sizes", sizes)
+    return render(request, "management/search.html", {"sizes": sizes})

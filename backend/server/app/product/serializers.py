@@ -1,16 +1,12 @@
-from django.utils.translation import get_language_from_request
-from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import serializers
 
 from app.product.models import (
-    Product,
     Image,
-    ProductItem,
     Price,
-    Variation,
-    VariationOption,
+    Product,
+    ProductItem,
 )
-from app.purchases.models import Currency
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -42,10 +38,13 @@ class GeneralProductSerializer(serializers.ModelSerializer):
 
     def get_price_from(self, obj):
         currency = self.context.get("preferences.currency__id")
+        print("🚨", obj.data["min_price_item"])
         if currency:
             prices = Price.objects.filter(
-                product=obj.data["min_price_item"], currency__id=currency
+                product=obj.data["min_price_item"],
+                currency__id=currency,
             ).first()
+            print("🚨", obj.data["min_price_item"])
             return PriceSerializer(prices).data
         else:
             prices = Price.objects.filter(product=obj.data["min_price_item"])
@@ -65,7 +64,8 @@ class GeneralProductSerializer(serializers.ModelSerializer):
         # print(currency_cookie)
         if currency_cookie:
             price = Price.objects.get(
-                product=obj.min_price_item, currency__iso=currency_cookie
+                product=obj.min_price_item,
+                currency__iso=currency_cookie,
             )
             if price:
                 return PriceSerializer(price).data
@@ -115,8 +115,8 @@ class CartProductSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="product.name")
     image = serializers.SerializerMethodField()
     # prices = serializers.SerializerMethodField()
-    price_from = serializers.SerializerMethodField()
-    variation = serializers.SerializerMethodField()
+    # price_from = serializers.SerializerMethodField()
+    # variation = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductItem
@@ -126,25 +126,25 @@ class CartProductSerializer(serializers.ModelSerializer):
             "image",
             "variation",
             # "RUB",
-            "prices",
-            "price_from",
+            # "prices",
+            # "price_from",
         )
 
-    def get_price_from(self, obj):
-        # currency = self.context.get("preferences.currency__id")
-        context = self.context
-        currency = context["preferences.currency__id"]
-        if currency:
-            # prices = Price.objects.filter(
-            #     product=obj.data["min_price_item"], currency__id=currency
-            # ).first()
-            prices = Price.objects.get(
-                product=obj.product.data["min_price_item"], currency__id=currency
-            )
-            return PriceSerializer(prices).data
-        else:
-            prices = Price.objects.filter(product=obj.product.data["min_price_item"])
-        return PriceSerializer(prices, many=True).data
+    # def get_price_from(self, obj):
+    #     # currency = self.context.get("preferences.currency__id")
+    #     context = self.context
+    #     currency = context["preferences.currency__id"]
+    #     if currency:
+    #         # prices = Price.objects.filter(
+    #         #     product=obj.data["min_price_item"], currency__id=currency
+    #         # ).first()
+    #         prices = Price.objects.get(
+    #             product=obj.product.data["min_price_item"], currency__id=currency
+    #         )
+    #         return PriceSerializer(prices).data
+    #     else:
+    #         prices = Price.objects.filter(product=obj.product.data["min_price_item"])
+    #     return PriceSerializer(prices, many=True).data
 
     def get_image(self, obj):
         request = self.context.get("request")

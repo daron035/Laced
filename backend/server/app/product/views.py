@@ -1,20 +1,27 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+
 from app.product.permissions import IsAdminOrReadOnly
 
 from .models import Product
-from .serializers import ProductSerializer, GeneralProductSerializer
+from .serializers import (
+    GeneralProductSerializer,
+    ProductSerializer,
+)
 from .session_views import get_session_currency
 
 
 class SaleProductPagination(PageNumberPagination):
-    # page_size = 20
-    page_size = 3
+    page_size = 20
+    # page_size = 3
     page_size_query_param = "page_size"
     max_page_size = 4
+
+
+from django.db.models import Q
 
 
 class ProductViewSet(ModelViewSet):
@@ -25,9 +32,15 @@ class ProductViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        # return queryset.filter(data__min_price_item__isnull=False, is_active=True)
-        return queryset.filter(data__sizes__isnull=False)
-        # return queryset.filter(min_price_item__isnull=False, is_active=True)
+        print(f"Total objects before filter: {queryset.count()}")
+        # queryset = queryset.filter(
+        #     data__min_price_item__isnull=False, data__sizes__isnull=False
+        # )
+        queryset = queryset.filter(~Q(data__min_price_item=None))
+        # Product.objects.filter(data__min_price_item__isnull=False, data__sizes__isnull=False)
+
+        print(f"Total objects after filter: {queryset.count()}")
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -67,13 +80,13 @@ class ProductViewSet(ModelViewSet):
             "additional_info": "Some additional info",
             # "currency": get_session_currency(request),
             "currency_id": self.get_serializer_context().get(
-                "preferences.currency__id"
+                "preferences.currency__id",
             ),
             "currency_symbol": self.get_serializer_context().get(
-                "preferences.currency__symbol"
+                "preferences.currency__symbol",
             ),
             "currency_iso": self.get_serializer_context().get(
-                "preferences.currency__iso"
+                "preferences.currency__iso",
             ),
         }
         data.update(additional_info)
@@ -88,11 +101,9 @@ class ProductViewSet(ModelViewSet):
         # permission_classes=[AllowAny],
     )
     def related_products(self, request):
-        queryset = self.get_queryset()[:3]
-        serializer = self.get_serializer(
-            queryset,
-            many=True,
-        )
+        # queryset = self.get_queryset()[:20]
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(

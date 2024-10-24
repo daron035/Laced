@@ -1,5 +1,5 @@
 import { getImgURL } from "@/utils/image.utils";
-import ImageWithFallback from "@/utils/ImageWithFallback";
+import ImageWithFallback from "@/components/utils/ImageWithFallback";
 
 interface Props {
   name: string;

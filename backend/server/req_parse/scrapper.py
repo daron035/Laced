@@ -1,28 +1,19 @@
 import json
-import base64
-import requests
-import re
-import os
+import random
 import sys
 import time
-import random
-from pprint import pprint
-from bs4 import BeautifulSoup
 from pathlib import Path
+from pprint import pprint
+
+from bs4 import BeautifulSoup
+from proxy import Proxy
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
-from selenium.webdriver import Keys
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import Select
-
-from selenium.webdriver import Safari
-from selenium.webdriver.safari.options import Options as SafariOptions
-
-from proxy import Proxy
+from selenium.webdriver.support.wait import WebDriverWait
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -30,7 +21,7 @@ proxy_file_path = BASE_DIR.joinpath("proxy_list.json")
 
 
 class Selenium:
-    """For Chrome"""
+    """For Chrome."""
 
     def __init__(self, ip: str) -> None:
         options = Options()
@@ -50,7 +41,7 @@ class Selenium:
         options.add_argument("user-agent=" + user_agent)
 
         self.driver = webdriver.Chrome(
-            options=options, service=ChromeService(ChromeDriverManager().install())
+            options=options, service=ChromeService(ChromeDriverManager().install()),
         )
         self.driver.set_window_size(1340, 1800)
 
@@ -61,7 +52,7 @@ class Selenium:
         self.driver.get(url)
         try:
             element = WebDriverWait(self.driver, 3).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.btn--primary"))
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.btn--primary")),
             )
             element.click()
             self._time()
@@ -69,17 +60,16 @@ class Selenium:
             # self._time()
             # self.driver.find_element(By.CSS_SELECTOR, "button.btn.btn--primary").click()
             # self._time()
-        except Exception as e:
+        except Exception:
             # print(f"An error occurred: {e}")
             print("Modal windows were not detected")
-            pass
 
     def get_data(self):
-        with open("links/all_product_links.json", "r") as link_file:
+        with open("links/all_product_links.json") as link_file:
             links = json.load(link_file)
 
         with open("products/product.json", "a+") as prod_file, open(
-            "products/image.json", "a+"
+            "products/image.json", "a+",
         ) as img_file:
             try:
                 glob_id = len(json.load(prod_file))
@@ -97,11 +87,11 @@ class Selenium:
 
 
 def worker():
-    with open("links/all_product_links.json", "r") as link_file:
+    with open("links/all_product_links.json") as link_file:
         links = json.load(link_file)
 
     with open("products/product.json", "a+") as prod_file, open(
-        "products/image.json", "a+"
+        "products/image.json", "a+",
     ) as img_file:
         try:
             glob_id = len(json.load(prod_file))

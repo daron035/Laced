@@ -1,6 +1,10 @@
-import Carousel from "@/components/common/Carousel";
-import Sl from "@/components/common/Sl";
+import ListProducts from "@/components/common/ListProducts";
+import styles from "@/styles/listProduct.module.scss";
 
 export default async function Page() {
-  return <div className="">Success Payment</div>;
+  return (
+    <>
+      <ListProducts />
+    </>
+  );
 }

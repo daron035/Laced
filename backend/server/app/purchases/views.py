@@ -1,25 +1,27 @@
-from rest_framework.views import APIView, csrf_exempt
+import json
+
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework import viewsets
-from rest_framework.decorators import action
+from rest_framework.views import (
+    APIView,
+    csrf_exempt,
+)
 
-from app.product.serializers import ProductSerializer
-from app.product.models import Product
-from .serializers import PaymentSerializer
-from app.purchases.services.create_payment import create_payment
-
-from .service import Cart, RecentViewed
-
-
-import json
-from django.http import HttpResponse
-from yookassa import Configuration, Payment
+from yookassa import (
+    Configuration,
+    Payment,
+)
 from yookassa.domain.notification import (
     WebhookNotificationEventType,
     WebhookNotificationFactory,
 )
-from yookassa.domain.common import SecurityHelper
+
+from app.product.views import get_session_currency
+from app.purchases.services.create_payment import create_payment
+
+from .serializers import PaymentSerializer
+from .service import Cart
 
 
 @csrf_exempt
@@ -113,7 +115,8 @@ def my_webhook_handler(request):
             # Специфичная логика
             # ...
             Configuration.configure(
-                "391979", "test_pkOJTPMf2oKAM_oGPtaIue-v51BEhUcCZ1zL6gAwr4g"
+                "391979",
+                "test_pkOJTPMf2oKAM_oGPtaIue-v51BEhUcCZ1zL6gAwr4g",
             )
             # Получим актуальную информацию о платеже
             payment_info = Payment.find_one(some_data["paymentId"])
@@ -146,7 +149,7 @@ class CreatePaymentView(APIView):
 
             print("\n\n", "AKLSDGHJUHERGHIERGKSADFJAASDFASJDFHLKAJHSD", "\n\n")
             # print(serialized_data.get("amount", "token"))
-            res = create_payment(serialized_data)
+            create_payment(serialized_data)
             # print("32323", res.confirmation.confirmation_url)
 
             # Здесь нужно выполнить запрос к YooKassa API, чтобы совершить платеж по токену.
@@ -168,25 +171,51 @@ class CreatePaymentView(APIView):
 
 
 class CartAPI(APIView):
-    """
-    Single API to handle cart operations
-    """
+    """Single API to handle cart operations."""
+
+    # def get_serializer_context(self):
+    #     """
+    #     Этот метод предоставляет контекст для сериализатора.
+    #     """
+    #     return {
+    #         'request': self.request,
+    #         'format': self.format_kwarg,
+    #         'view': self
+    #     }
+
+    def get_serializer_context(self):
+        # context = super().get_serializer_context()
+        context = {}
+        currency = get_session_currency(self.request)
+        if currency is not None:
+            context["preferences.currency__id"] = currency["id"]
+            context["preferences.currency__symbol"] = currency["symbol"]
+            context["preferences.currency__iso"] = currency["iso"]
+        return context
 
     def get(self, request, format=None):
         # return Response(status=status.HTTP_200_OK)
+        # context = self.get_serializer_context()
         cart = Cart(request)
+        # print(request.session["preferences"])
+        print("🫥")
+        print(request.session["cart"])
 
         print(1)
         if len(cart) == 0:
             return Response(status=status.HTTP_204_NO_CONTENT)
             # return Response({"data": None}, status=status.HTTP_200_OK)
             return Response({None}, status=status.HTTP_200_OK)
+        print()
         print(2)
+        a = cart.get_total_price()
         return Response(
             {
                 "data": list(iter(cart)),
+                # "cart": cart.data(),
                 "count": len(cart),
-                # "cart_total_price": cart.get_total_price(),
+                "currency": a[0],
+                "cart_total_price": cart.get_total_price()[1],
             },
             status=status.HTTP_200_OK,
             # status=status.HTTP_202_ACCEPTED,
@@ -196,21 +225,22 @@ class CartAPI(APIView):
         cart = Cart(request)
 
         if "remove" in request.data:
-            product = request.data["id"]
-            cart.remove(product)
-            return Response(
-                {"message": "Item removed"}, status=status.HTTP_202_ACCEPTED
-            )
+            product_id = request.data["product_id"]
+            variation_id = request.data["variation_id"]
+            cart.remove(product_id, variation_id)
+            return Response({"message": "Item removed"}, status=status.HTTP_200_OK)
         elif "clear" in request.data:
             cart.clear()
             return Response(
-                {"message": "Cart is cleared"}, status=status.HTTP_205_RESET_CONTENT
+                {"message": "Cart is cleared"},
+                status=status.HTTP_205_RESET_CONTENT,
             )
         else:
             product = request.data
             try:
-                cart.add(
-                    product_item_id=product["id"],
+                added_item = cart.add(
+                    product_id=product["product_id"],
+                    variation_id=product["variation_id"],
                     quantity=1,
                     # quantity=product.get("quantity", 1),
                     overide_quantity=(
@@ -222,9 +252,21 @@ class CartAPI(APIView):
             except ValueError as e:
                 # return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
                 return Response(
-                    {"message": str(e)}, status=status.HTTP_208_ALREADY_REPORTED
+                    {"message": str(e)},
+                    status=status.HTTP_208_ALREADY_REPORTED,
                 )
-        return Response({"message": "cart updated"}, status=status.HTTP_200_OK)
+        # return Response({"message": "cart updated"}, status=status.HTTP_200_OK)
+        return Response(added_item)
+        return Response(
+            {
+                "data": list(iter(cart)),
+                # "cart": cart.data(),
+                "count": len(cart),
+                # "cart_total_price": cart.get_total_price(),
+            },
+            status=status.HTTP_200_OK,
+            # status=status.HTTP_202_ACCEPTED,
+        )
         # Now, set the CORS header before returning the response
         response = Response({"message": "cart updated"}, status=status.HTTP_200_OK)
         response["Access-Control-Allow-Credentials"] = "true"
@@ -233,15 +275,24 @@ class CartAPI(APIView):
     def delete(self, request, **kwargs):
         cart = Cart(request)
 
-        if "clear" in request.data:
-            cart.clear()
-            return Response(
-                {"message": "Cart is cleared"}, status=status.HTTP_205_RESET_CONTENT
-            )
+        # if "clear" in request.data:
+        #     cart.clear()
+        #     return Response(
+        #         {"message": "Cart is cleared"}, status=status.HTTP_205_RESET_CONTENT
+        #     )
 
-        product = request.data["id"]
-        cart.remove(product)
-        return Response({"message": "Item removed"}, status=status.HTTP_202_ACCEPTED)
+        product_id = request.data["product_id"]
+        variation_id = request.data["variation_id"]
+        i = cart.remove(product_id, variation_id)
+        return Response(int(i), status=status.HTTP_200_OK)
+
+        cart = Cart(request)
+
+        if "remove" in request.data:
+            product_id = request.data["product_id"]
+            variation_id = request.data["variation_id"]
+            cart.remove(product_id, variation_id)
+            return Response({"message": "Item removed"}, status=status.HTTP_200_OK)
 
 
 #

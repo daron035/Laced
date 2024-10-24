@@ -3,16 +3,15 @@ from random import choice
 
 
 class ExceptionGetProxy(Exception):
-    """Proxy file path error"""
+    """Proxy file path error."""
 
-    pass
 
 
 class Proxy:
     @classmethod
     def get(cls, path):
         try:
-            with open(path, "r") as json_file:
+            with open(path) as json_file:
                 list_proxy = json.load(json_file)
 
                 print(f"rest proxy url: {len(list_proxy)}")

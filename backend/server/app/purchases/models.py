@@ -1,7 +1,7 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete, pre_delete
 
 
 class Country(models.Model):
@@ -23,7 +23,7 @@ class Country(models.Model):
     def get_default_pk(cls):
         country, created = cls.objects.get_or_create(
             name="Russian Federation",
-            iso = "RU"
+            iso="RU",
             # defaults=dict(description='this is not an exam'),
         )
         return country.pk
@@ -50,7 +50,7 @@ class Currency(models.Model):
             # iso="USD",
             # symbol="\u0024"
             iso="RUB",
-            symbol="\u20BD"
+            symbol="\u20BD",
         )
         return currency.pk
 
@@ -125,6 +125,12 @@ def create_profile(sender, instance, created, **kwargs):
         user_profile.save()
 
 
+class Addresses(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.PROTECT)
+    city = models.CharField(max_length=255)
+    postal_code = models.CharField(max_length=255)
+
+
 # from django.contrib.auth.signals import user_logged_in
 # from django.dispatch import receiver
 # from django.contrib.auth import get_user_model
@@ -136,4 +142,3 @@ def create_profile(sender, instance, created, **kwargs):
 # def user_logged_in_handler(sender, request, user, **kwargs):
 #     # print(f"Пользователь {user.username} успешно вошел в систему.")
 #     print(f"Пользователь  успешно вошел в систему.")
-

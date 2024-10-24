@@ -18,7 +18,8 @@ done
 
 ./manage.py loaddata category.json variation.json variation_option.json country.json currency.json product.json image.json product.json
 
-gunicorn server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
+# python manage.py runserver
+# gunicorn server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
 # until ./manage.py migrate
 # do
 #     echo "Waiting for db to be ready..."
@@ -29,4 +30,5 @@ gunicorn server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
 
 # gunicorn server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
 # gunicorn --reload server.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4
+gunicorn --reload server.wsgi --bind 0.0.0.0:8000 --workers 1 --threads 1
 # gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 4 --threads 4

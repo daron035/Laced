@@ -7,7 +7,7 @@ import Loading from "./Loading";
 
 import { useLogoutMutation } from "@/redux/features/authApiSlice";
 import { logout as setLogout } from "@/redux/features/authSlice";
-// import { getCart } from "@/redux/features/cartSlice";
+import { fetchCart } from "@/redux/features/cartSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 import "@/styles/navBar.sass";
@@ -16,15 +16,18 @@ import fallback from "@/public/logo.svg";
 
 export default function Navbar() {
   const dispatch = useAppDispatch();
+  const cart = useAppSelector((state) => state.cart);
+  const { items, status, count } = cart;
+  console.log(count);
 
-  // useEffect(() => {
-  //   dispatch(getCart());
-  // }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
 
   const [logout] = useLogoutMutation();
 
   const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
-  // const { count } = useAppSelector((state) => state.cart);
+  // const { count } = useAppSelector((state) => state.cart.items);
 
   const handleLogout = () => {
     logout(undefined)
@@ -115,14 +118,14 @@ export default function Navbar() {
           <div className="cursor-pointer py-6 px-4">
             <Search width="25px" height="25px" fill="#101010" />
           </div>
-          <div className="cursor-pointer py-6 px-4 relative">
+          <Link href="/cart" className="cursor-pointer py-6 px-4 relative">
             <Bag width="25px" height="25px" fill="#101010" />
-            {/* {count !== 0 && ( */}
-            {/*   <div className="bg-black flex justify-center items-center w-[18px] h-[18px] text-xs text-white rounded-full absolute top-5 left-[30px]"> */}
-            {/*     {count} */}
-            {/*   </div> */}
-            {/* )} */}
-          </div>
+            {count !== 0 && (
+              <div className="bg-black flex justify-center items-center w-[18px] h-[18px] text-xs text-white rounded-full absolute top-5 left-[30px]">
+                {count}
+              </div>
+            )}
+          </Link>
         </div>
       </div>
     </header>

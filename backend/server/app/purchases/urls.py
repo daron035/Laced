@@ -1,6 +1,11 @@
 from django.urls import path
 
-from .views import CartAPI, CreatePaymentView, my_webhook_handler
+from .views import (
+    CartAPI,
+    CreatePaymentView,
+    my_webhook_handler,
+)
+
 
 urlpatterns = [
     path("cart/", CartAPI.as_view(), name="cart"),

@@ -1,9 +1,12 @@
-import json
 import uuid
-from django.http.response import JsonResponse
-from rest_framework.renderers import JSONRenderer
+
 from django.contrib.auth import get_user_model
-from yookassa import Configuration, Payment
+
+from yookassa import (
+    Configuration,
+    Payment,
+)
+
 
 # from ..models import Balance, BalanceChange
 
